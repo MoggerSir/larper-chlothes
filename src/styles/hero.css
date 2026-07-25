@@ -109,6 +109,19 @@
   cursor: grabbing;
 }
 
+@media (hover: none), (pointer: coarse) {
+  .hero__model-stage canvas {
+    /*
+     * A gesture that starts on the 3D stage belongs to the model. This keeps
+     * ScrollSmoother/the browser from moving the page at the same time; as
+     * soon as the finger is released, gestures outside the canvas scroll
+     * normally again.
+     */
+    touch-action: none;
+    overscroll-behavior: contain;
+  }
+}
+
 .hero__model-note {
   position: absolute;
   left: 50%;

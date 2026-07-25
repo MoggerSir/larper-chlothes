@@ -179,20 +179,77 @@
   }
 }
 
+@media (max-width: 61.999rem) {
+  #coleccion.section {
+    padding-top: 2.75rem;
+  }
+
+  .editorial {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+    min-height: auto;
+  }
+
+  /*
+   * On mobile the copy becomes part of the parent composition so the label
+   * and product name can introduce the garment immediately. Details and CTA
+   * then continue directly below the visual instead of forming a distant,
+   * disconnected second block.
+   */
+  .editorial__copy {
+    display: contents;
+  }
+
+  .editorial__copy::before {
+    content: none;
+  }
+
+  .editorial__eyebrow {
+    order: 1;
+    margin-bottom: 0.1rem;
+  }
+
+  .editorial__title {
+    order: 2;
+    max-width: 12ch;
+    margin-bottom: 0.35rem;
+  }
+
+  .editorial__image {
+    order: 3;
+    width: 100%;
+    height: min(62svh, 38rem);
+    min-height: 28rem;
+    margin-block: 0.15rem 0.85rem;
+  }
+
+  .editorial__desc {
+    order: 4;
+    max-width: 38rem;
+  }
+
+  .editorial__row {
+    order: 5;
+    margin-top: 0.65rem;
+  }
+}
+
 @media (max-width: 40rem) {
   .editorial {
-    gap: 2.25rem;
+    gap: 0.8rem;
     min-height: auto;
   }
 
   .editorial__image {
-    height: 68svh;
-    min-height: 30rem;
-    max-height: 42rem;
+    height: min(59svh, 34rem);
+    min-height: 27rem;
+    max-height: 34rem;
   }
 
   .editorial__image img {
-    padding: 3.5rem 0.5rem 2.25rem;
+    padding: 2.8rem 0.35rem 2rem;
   }
 
   .editorial__title {
