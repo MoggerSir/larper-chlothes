@@ -28,8 +28,18 @@ export function Lookbook({ imageSrc, lines }: LookbookProps) {
     };
 
     const tl = createPinnedTimeline(section, {
-      end: () => `+=${Math.round(window.innerHeight * lineEls.length * 0.72)}`,
-      scrub: 1,
+      // Give every phrase almost a full viewport of travel, then settle the
+      // scroll on the nearest text beat. Disabling inertia prevents a fast
+      // wheel/touch gesture from casually skipping several messages.
+      end: () => `+=${Math.round(window.innerHeight * lineEls.length * 0.92)}`,
+      scrub: 0.85,
+      snap: {
+        snapTo: "labelsDirectional",
+        duration: { min: 0.28, max: 0.68 },
+        delay: 0.06,
+        ease: "power2.inOut",
+        inertia: false,
+      },
       onEnter: () => setHeaderDark(true),
       onEnterBack: () => setHeaderDark(true),
       onLeave: () => setHeaderDark(false),
@@ -41,6 +51,7 @@ export function Lookbook({ imageSrc, lines }: LookbookProps) {
     }
 
     lineEls.forEach((line, i) => {
+      tl.addLabel(`message-${i + 1}`, i);
       const at = i;
       tl.to(line, { opacity: 1, y: 0, duration: 0.5 }, at)
         .to(line, { opacity: i === lineEls.length - 1 ? 1 : 0, y: -18, duration: 0.5 }, at + 0.7);

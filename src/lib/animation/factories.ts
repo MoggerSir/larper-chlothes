@@ -115,6 +115,7 @@ export interface PinnedSectionOptions {
   end?: string | (() => string | number);
   scrub?: number | boolean;
   pinSpacing?: boolean;
+  snap?: ScrollTrigger.Vars["snap"];
   onEnter?: () => void;
   onEnterBack?: () => void;
   onLeave?: () => void;
@@ -144,6 +145,7 @@ export function createPinnedTimeline(
   const {
     end = "+=120%",
     scrub = 1,
+    snap,
     onEnter,
     onEnterBack,
     onLeave,
@@ -157,6 +159,7 @@ export function createPinnedTimeline(
       pin: true,
       pinReparent: true,
       scrub,
+      snap,
       anticipatePin: 1,
       invalidateOnRefresh: true,
       onEnter,
