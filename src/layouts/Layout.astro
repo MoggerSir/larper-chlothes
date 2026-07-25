@@ -1,0 +1,51 @@
+---
+import "../styles/global.css";
+import "../styles/layout.css";
+import "../styles/header.css";
+import "../styles/hero.css";
+import "../styles/shop.css";
+import "../styles/product-modal.css";
+import "../styles/lookbook.css";
+import "../styles/editorial.css";
+import "../styles/newsletter.css";
+import "../styles/footer.css";
+import { Header } from "../components/react/Header";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <!-- Fixed UI must live outside ScrollSmoother's transformed content so it
+         remains anchored to the viewport throughout the entire landing. -->
+    <Header client:load />
+    <div class="section-jump" id="section-jump" aria-hidden="true">
+      <div class="section-jump__mark">
+        <span>Larper Chlothes</span>
+        <i></i>
+        <small>Cambiando de capítulo</small>
+      </div>
+    </div>
+    <div id="smooth-wrapper">
+      <div id="smooth-content">
+        <slot />
+      </div>
+    </div>
+    <script>
+      import "../lib/animation/bootstrap";
+    </script>
+  </body>
+</html>

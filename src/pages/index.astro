@@ -1,0 +1,131 @@
+---
+import { getImage } from "astro:assets";
+
+import Layout from "../layouts/Layout.astro";
+import Footer from "../components/sections/Footer.astro";
+import { Hero } from "../components/react/Hero";
+import { ProductGrid } from "../components/react/ProductGrid";
+import { Lookbook } from "../components/react/Lookbook";
+import { Editorial } from "../components/react/Editorial";
+import { Newsletter } from "../components/react/Newsletter";
+import { products, formatPrice } from "../data/products";
+
+const lookbookProduct = products[1]; // Atrocity Layered Tee
+const editorialProduct = products[2]; // Vice Quarter-Zip
+
+const lookbookModelImg = await getImage({ src: lookbookProduct.images.model, width: 1600 });
+const editorialModelImg = await getImage({ src: editorialProduct.images.model, width: 1200 });
+
+const heroProducts = [
+  products[0],
+  products[1],
+  products[2],
+  products[3],
+  products[4],
+  products[7],
+];
+const heroModelPaths = [
+  "/models/chamarra_Gothica_modelo_3D.glb",
+  "/models/sudadera_gothica_modelo_3D.glb",
+  "/models/sudadera_patriotica_modelo_3D.glb",
+  "/models/Playera_de_linux_modelo_3D.glb",
+  "/models/chamarra_cuero_cafe_modelo_3D.glb",
+  "/models/Playera_Everlast_model_3d.glb?v=2",
+];
+
+const heroSlides = await Promise.all(
+  heroProducts.map(async (product, index) => {
+    const card = await getImage({ src: product.images.flat, width: 480 });
+    const modelImage = await getImage({ src: product.images.model, width: 900 });
+    return {
+      id: product.id,
+      index: product.index,
+      name: product.name,
+      colorway: product.colorway,
+      priceLabel: formatPrice(product),
+      tag: product.tag,
+      description: product.description,
+      model3dSrc: heroModelPaths[index],
+      cardSrc: card.src,
+      modelImageSrc: modelImage.src,
+      label: product.label,
+      category: product.category,
+      sizes: product.category === "Pantalones" ? ["28", "30", "32", "34", "36"] : ["CH", "M", "G", "XG"],
+      colors: product.colorway.split(" / "),
+    };
+  }),
+);
+
+const productCards = await Promise.all(
+  products.map(async (product) => {
+    const flat = await getImage({ src: product.images.flat, width: 640 });
+    const model = await getImage({ src: product.images.model, width: 640 });
+    return {
+      id: product.id,
+      index: product.index,
+      name: product.name,
+      label: product.label,
+      category: product.category,
+      tag: product.tag,
+      colorway: product.colorway,
+      priceLabel: formatPrice(product),
+      description: product.description,
+      flatSrc: flat.src,
+      modelSrc: model.src,
+      sizes: product.category === "Pantalones" ? ["28", "30", "32", "34", "36"] : ["CH", "M", "G", "XG"],
+      colors: product.colorway.split(" / "),
+    };
+  }),
+);
+
+---
+
+<Layout
+  title="Larper Chlothes — Ropa sin ruido, solo actitud"
+  description="Ropa única de estudiantes universitarios: prendas con historia, calidad y una segunda vida dentro de la comunidad."
+>
+  <Hero client:load slides={heroSlides} />
+
+  <section class="section" id="tienda">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="section-head__title">La colección completa</h2>
+        <p class="section-head__copy">
+          Seis piezas, producción limitada. Pasa el cursor para ver cada
+          prenda puesta.
+        </p>
+      </div>
+      <ProductGrid client:visible products={productCards} />
+    </div>
+  </section>
+
+  <Lookbook
+    client:visible
+    imageSrc={lookbookModelImg.src}
+    lines={[
+      "Una prenda. Una sola oportunidad.",
+      "Segunda vida para ropa con historia.",
+      "Calidad que merece seguir circulando.",
+      "De estudiantes, para estudiantes.",
+    ]}
+  />
+
+  <section class="section" id="coleccion">
+    <div class="container">
+      <Editorial
+        client:visible
+        imageSrc={editorialModelImg.src}
+        index={editorialProduct.index}
+        name={editorialProduct.name}
+        colorway={editorialProduct.colorway}
+        priceLabel={formatPrice(editorialProduct)}
+      />
+    </div>
+  </section>
+
+  <div class="section--tight">
+    <Newsletter client:visible />
+  </div>
+
+  <Footer />
+</Layout>

@@ -1,0 +1,215 @@
+.editorial {
+  position: relative;
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 7rem);
+  min-height: 92svh;
+  align-items: center;
+}
+
+.editorial__image {
+  position: relative;
+  isolation: isolate;
+  height: min(72svh, 44rem);
+  min-height: 34rem;
+  border: 1px solid rgba(14, 14, 16, 0.14);
+  border-radius: clamp(1.5rem, 3vw, 2.8rem);
+  overflow: hidden;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(229, 223, 208, 0.72)),
+    var(--color-bg-alt);
+  box-shadow:
+    0 36px 80px rgba(14, 14, 16, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.editorial__image::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 8%;
+  border: 1px solid rgba(14, 14, 16, 0.09);
+  border-radius: 50%;
+}
+
+.editorial__image-glow {
+  position: absolute;
+  z-index: -1;
+  inset: 15% 6% 4%;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(181, 35, 28, 0.2), transparent 36%),
+    radial-gradient(circle at 50% 56%, rgba(14, 14, 16, 0.28), transparent 65%);
+  filter: blur(25px);
+  opacity: 0.75;
+}
+
+.editorial__image img {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  padding: clamp(2.4rem, 6vw, 5rem) clamp(1rem, 3vw, 2.5rem) 1.8rem;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 28px 25px rgba(14, 14, 16, 0.3));
+  will-change: transform;
+}
+
+.editorial__image-index {
+  position: absolute;
+  inset: 1rem 1.25rem auto auto;
+  z-index: 3;
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 9vw, 8rem);
+  font-weight: 600;
+  line-height: 1;
+  color: rgba(14, 14, 16, 0.055);
+}
+
+.editorial__corner {
+  position: absolute;
+  z-index: 4;
+  width: 2rem;
+  height: 2rem;
+  pointer-events: none;
+}
+
+.editorial__corner--tl {
+  top: 1.25rem;
+  left: 1.25rem;
+  border-top: 1px solid var(--color-accent);
+  border-left: 1px solid var(--color-accent);
+}
+
+.editorial__corner--br {
+  right: 1.25rem;
+  bottom: 1.25rem;
+  border-right: 1px solid var(--color-accent);
+  border-bottom: 1px solid var(--color-accent);
+}
+
+.editorial__scroll-rail {
+  position: absolute;
+  z-index: 5;
+  top: 25%;
+  right: 1.2rem;
+  width: 1px;
+  height: 48%;
+  background: rgba(14, 14, 16, 0.13);
+}
+
+.editorial__scroll-rail span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--color-accent);
+  transform: scaleY(0);
+}
+
+.editorial__scroll-label {
+  position: absolute;
+  z-index: 5;
+  left: 1.35rem;
+  bottom: 1.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+.editorial__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  color: var(--color-accent);
+}
+
+.editorial__copy {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  justify-content: center;
+  padding-block: 2rem;
+}
+
+.editorial__copy::before {
+  content: "SELECCIÓN  /  UNIVERSITARIA";
+  display: block;
+  padding-bottom: 1.15rem;
+  border-bottom: 1px solid var(--color-line);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.17em;
+  color: var(--color-ink-faint);
+}
+
+.editorial__title {
+  font-size: clamp(3rem, 5.5vw, 6.25rem);
+  max-width: 10ch;
+}
+
+.editorial__desc {
+  color: var(--color-ink-soft);
+  max-width: 32ch;
+  font-size: var(--fs-base);
+  line-height: 1.65;
+}
+
+.editorial__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+}
+
+.editorial__price {
+  font-family: var(--font-mono);
+  font-size: var(--fs-md);
+}
+
+@media (min-width: 62rem) {
+  .editorial {
+    grid-template-columns: minmax(0, 1.08fr) minmax(20rem, 0.92fr);
+  }
+
+  .editorial__image {
+    height: min(78svh, 52rem);
+    min-height: 42rem;
+  }
+}
+
+@media (max-width: 40rem) {
+  .editorial {
+    gap: 2.25rem;
+    min-height: auto;
+  }
+
+  .editorial__image {
+    height: 68svh;
+    min-height: 30rem;
+    max-height: 42rem;
+  }
+
+  .editorial__image img {
+    padding: 3.5rem 0.5rem 2.25rem;
+  }
+
+  .editorial__title {
+    font-size: clamp(2.4rem, 12vw, 3.5rem);
+  }
+
+  .editorial__desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .editorial__row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .editorial__row .pill-btn {
+    justify-content: space-between;
+  }
+}

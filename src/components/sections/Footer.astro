@@ -1,0 +1,78 @@
+---
+import { Icon } from "../react/Icon";
+import { Logo } from "../react/Logo";
+
+const trustPoints = [
+  { icon: "lock" as const, label: "Pago 100% seguro" },
+  { icon: "shieldCheck" as const, label: "Calidad garantizada" },
+  { icon: "truck" as const, label: "Envío a todo México" },
+];
+
+const columns = [
+  {
+    title: "Tienda",
+    links: ["Chamarras", "Sudaderas", "Playeras", "Pantalones", "Novedades"],
+  },
+  {
+    title: "Marca",
+    links: ["Nosotros", "Materiales", "Lookbook", "Tiendas físicas"],
+  },
+  {
+    title: "Ayuda",
+    links: ["Envíos", "Cambios y devoluciones", "Guía de tallas", "Contacto"],
+  },
+];
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__trust">
+    {
+      trustPoints.map((point) => (
+        <div class="site-footer__trust-item">
+          <Icon name={point.icon} size={17} strokeWidth={1.4} />
+          <span>{point.label}</span>
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="container site-footer__top">
+    <div class="site-footer__brand">
+      <Logo tone="inverse" />
+      <p class="site-footer__tagline">
+        Ropa sin ruido. Solo actitud. Diseñada en Cancún, hecha para el
+        underground.
+      </p>
+      <div class="site-footer__social">
+        <a href="#" aria-label="Instagram"><Icon name="instagram" size={18} /></a>
+        <a href="#" aria-label="TikTok"><Icon name="tiktok" size={18} /></a>
+        <a href="#" aria-label="WhatsApp"><Icon name="whatsapp" size={18} /></a>
+      </div>
+    </div>
+
+    <nav class="site-footer__columns" aria-label="Enlaces del sitio">
+      {
+        columns.map((col) => (
+          <div class="site-footer__col">
+            <p class="eyebrow">{col.title}</p>
+            <ul>
+              {col.links.map((link) => (
+                <li>
+                  <a href="#tienda">{link}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </nav>
+  </div>
+
+  <div class="container site-footer__bottom">
+    <p>&copy; {new Date().getFullYear()} Larper Chlothes. Todos los derechos reservados.</p>
+    <a href="#top" class="site-footer__top-link">
+      Volver arriba
+      <Icon name="arrowUpRight" size={13} />
+    </a>
+  </div>
+</footer>

@@ -1,0 +1,120 @@
+.site-footer {
+  background: var(--color-ink);
+  color: var(--color-inverse-ink);
+  border-radius: var(--radius-frame) var(--radius-frame) 0 0;
+  margin-top: var(--space-xl);
+}
+
+.site-footer__trust {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  padding-block: var(--space-md);
+  border-bottom: 1px solid var(--color-line-on-dark);
+}
+
+.site-footer__trust-item {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: var(--fs-xs);
+  color: var(--color-inverse-ink-soft);
+}
+
+.site-footer__trust-item svg {
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+.site-footer__top {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  padding-block: var(--space-2xl) var(--space-xl);
+}
+
+.site-footer__brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-width: 20rem;
+}
+
+.site-footer__tagline {
+  color: var(--color-inverse-ink-soft);
+  font-size: var(--fs-sm);
+}
+
+.site-footer__social {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.site-footer__social a {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-line-on-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.site-footer__columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+
+.site-footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.site-footer__col ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.site-footer__col a {
+  color: var(--color-inverse-ink-soft);
+  font-size: var(--fs-sm);
+  transition: color 0.3s ease;
+}
+
+.site-footer__col a:hover {
+  color: var(--color-inverse-ink);
+}
+
+.site-footer__bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-sm);
+  padding-block: var(--space-md);
+  border-top: 1px solid var(--color-line-on-dark);
+  font-size: var(--fs-xs);
+  color: var(--color-inverse-ink-soft);
+}
+
+.site-footer__top-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  color: var(--color-inverse-ink);
+}
+
+@media (min-width: 46rem) {
+  .site-footer__top {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .site-footer__columns {
+    flex: 1;
+    max-width: 34rem;
+  }
+}
