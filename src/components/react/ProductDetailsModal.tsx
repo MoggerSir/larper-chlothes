@@ -30,7 +30,12 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
   const [color, setColor] = useState("");
   const [closing, setClosing] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
   const closingRef = useRef(false);
+  const viewerOpenRef = useRef(false);
+  const dragRef = useRef({ active: false, x: 0, y: 0 });
   const closeTimerRef = useRef<number | null>(null);
   const openFrameRef = useRef<number | null>(null);
   const secondOpenFrameRef = useRef<number | null>(null);
@@ -49,6 +54,29 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
     closeTimerRef.current = window.setTimeout(onClose, 480);
   }, [onClose]);
 
+  const openViewer = () => {
+    viewerOpenRef.current = true;
+    setViewerOpen(true);
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  };
+
+  const closeViewer = () => {
+    viewerOpenRef.current = false;
+    dragRef.current.active = false;
+    setViewerOpen(false);
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  };
+
+  const changeZoom = (amount: number) => {
+    setZoom((current) => {
+      const next = Math.min(4, Math.max(1, Number((current + amount).toFixed(2))));
+      if (next === 1) setPan({ x: 0, y: 0 });
+      return next;
+    });
+  };
+
   useEffect(() => {
     if (!product) return;
     closingRef.current = false;
@@ -58,6 +86,10 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
       secondOpenFrameRef.current = window.requestAnimationFrame(() => setVisible(true));
     });
     setActiveImage("flat");
+    viewerOpenRef.current = false;
+    setViewerOpen(false);
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
     setSize("");
     setColor(product.colors[0] ?? "");
     const previousHtmlOverflow = document.documentElement.style.overflow;
@@ -68,7 +100,9 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
     document.body.style.overscrollBehavior = "none";
     window.dispatchEvent(new CustomEvent("product-modal:toggle", { detail: { open: true } }));
     const handleKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") requestClose();
+      if (event.key !== "Escape") return;
+      if (viewerOpenRef.current) closeViewer();
+      else requestClose();
     };
     window.addEventListener("keydown", handleKey);
     return () => {
@@ -106,14 +140,26 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
         </button>
 
         <div className="product-modal__gallery">
-          <div className="product-modal__main-image">
+          <div
+            className="product-modal__main-image"
+            role="button"
+            tabIndex={0}
+            aria-label={`Ampliar imagen de ${product.name}`}
+            onClick={openViewer}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openViewer();
+              }
+            }}
+          >
             <img
               key={activeImage}
               src={activeImage === "flat" ? product.flatSrc : product.modelSrc}
               alt={activeImage === "flat" ? product.name : `${product.name} puesta por modelo`}
             />
             <span className="product-modal__image-label">
-              {activeImage === "flat" ? "Vista de producto" : "Vista editorial"}
+              {activeImage === "flat" ? "Vista de producto" : "Vista editorial"} · ampliar
             </span>
           </div>
           <div className="product-modal__thumbs" aria-label="Vistas del producto">
@@ -198,6 +244,82 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
           </div>
         </div>
       </section>
+      {viewerOpen && (
+        <div
+          className="product-viewer"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Vista ampliada de ${product.name}`}
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) closeViewer();
+          }}
+        >
+          <div className="product-viewer__topbar">
+            <div>
+              <span>{product.name}</span>
+              <small>{Math.round(zoom * 100)}%</small>
+            </div>
+            <div className="product-viewer__controls">
+              <button type="button" onClick={() => changeZoom(-0.35)} disabled={zoom <= 1} aria-label="Alejar">−</button>
+              <button type="button" onClick={() => changeZoom(0.35)} disabled={zoom >= 4} aria-label="Acercar">+</button>
+              <button type="button" onClick={() => {
+                setZoom(1);
+                setPan({ x: 0, y: 0 });
+              }}>Restablecer</button>
+              <button type="button" onClick={closeViewer} aria-label="Cerrar imagen ampliada">
+                <Icon name="close" size={18} />
+              </button>
+            </div>
+          </div>
+          <div
+            className={`product-viewer__viewport ${zoom > 1 ? "is-zoomed" : ""}`}
+            onWheel={(event) => {
+              event.preventDefault();
+              changeZoom(event.deltaY < 0 ? 0.25 : -0.25);
+            }}
+            onDoubleClick={() => {
+              if (zoom > 1) {
+                setZoom(1);
+                setPan({ x: 0, y: 0 });
+              } else {
+                setZoom(2);
+              }
+            }}
+            onPointerDown={(event) => {
+              if (zoom <= 1) return;
+              dragRef.current = { active: true, x: event.clientX, y: event.clientY };
+              event.currentTarget.setPointerCapture(event.pointerId);
+            }}
+            onPointerMove={(event) => {
+              if (!dragRef.current.active || zoom <= 1) return;
+              const dx = event.clientX - dragRef.current.x;
+              const dy = event.clientY - dragRef.current.y;
+              dragRef.current.x = event.clientX;
+              dragRef.current.y = event.clientY;
+              setPan((current) => ({ x: current.x + dx, y: current.y + dy }));
+            }}
+            onPointerUp={(event) => {
+              dragRef.current.active = false;
+              if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+                event.currentTarget.releasePointerCapture(event.pointerId);
+              }
+            }}
+            onPointerCancel={() => {
+              dragRef.current.active = false;
+            }}
+          >
+            <img
+              src={activeImage === "flat" ? product.flatSrc : product.modelSrc}
+              alt={`${product.name} ampliada`}
+              draggable={false}
+              style={{ transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom})` }}
+            />
+          </div>
+          <p className="product-viewer__help">
+            Rueda o controles para ampliar · arrastra para recorrer · doble clic para alternar
+          </p>
+        </div>
+      )}
     </div>,
     document.body,
   );
