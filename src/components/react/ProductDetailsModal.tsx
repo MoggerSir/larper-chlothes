@@ -36,6 +36,8 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
   const closingRef = useRef(false);
   const viewerOpenRef = useRef(false);
   const dragRef = useRef({ active: false, x: 0, y: 0 });
+  const pointersRef = useRef(new Map<number, { x: number; y: number }>());
+  const pinchDistanceRef = useRef(0);
   const closeTimerRef = useRef<number | null>(null);
   const openFrameRef = useRef<number | null>(null);
   const secondOpenFrameRef = useRef<number | null>(null);
@@ -64,6 +66,8 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
   const closeViewer = () => {
     viewerOpenRef.current = false;
     dragRef.current.active = false;
+    pointersRef.current.clear();
+    pinchDistanceRef.current = 0;
     setViewerOpen(false);
     setZoom(1);
     setPan({ x: 0, y: 0 });
@@ -254,6 +258,20 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             if (event.target === event.currentTarget) closeViewer();
           }}
         >
+          <img
+            className="product-viewer__ambient-image"
+            src={activeImage === "flat" ? product.flatSrc : product.modelSrc}
+            alt=""
+            aria-hidden="true"
+          />
+          <button
+            type="button"
+            className="product-viewer__mobile-close"
+            onClick={closeViewer}
+            aria-label="Cerrar imagen ampliada"
+          >
+            <Icon name="close" size={20} />
+          </button>
           <div className="product-viewer__topbar">
             <div>
               <span>{product.name}</span>
@@ -261,6 +279,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             </div>
             <div className="product-viewer__controls">
               <button type="button" onClick={() => changeZoom(-0.35)} disabled={zoom <= 1} aria-label="Alejar">−</button>
+              <output aria-live="polite">{Math.round(zoom * 100)}%</output>
               <button type="button" onClick={() => changeZoom(0.35)} disabled={zoom >= 4} aria-label="Acercar">+</button>
               <button type="button" onClick={() => {
                 setZoom(1);
@@ -286,11 +305,35 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
               }
             }}
             onPointerDown={(event) => {
-              if (zoom <= 1) return;
-              dragRef.current = { active: true, x: event.clientX, y: event.clientY };
+              pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
               event.currentTarget.setPointerCapture(event.pointerId);
+              if (pointersRef.current.size === 2) {
+                const [first, second] = Array.from(pointersRef.current.values());
+                if (!first || !second) return;
+                pinchDistanceRef.current = Math.hypot(second.x - first.x, second.y - first.y);
+                dragRef.current.active = false;
+              } else if (zoom > 1) {
+                dragRef.current = { active: true, x: event.clientX, y: event.clientY };
+              }
             }}
             onPointerMove={(event) => {
+              if (!pointersRef.current.has(event.pointerId)) return;
+              pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+              if (pointersRef.current.size >= 2) {
+                const [first, second] = Array.from(pointersRef.current.values());
+                if (!first || !second) return;
+                const distance = Math.hypot(second.x - first.x, second.y - first.y);
+                if (pinchDistanceRef.current > 0) {
+                  const ratio = distance / pinchDistanceRef.current;
+                  setZoom((current) => {
+                    const next = Math.min(4, Math.max(1, current * ratio));
+                    if (next === 1) setPan({ x: 0, y: 0 });
+                    return next;
+                  });
+                }
+                pinchDistanceRef.current = distance;
+                return;
+              }
               if (!dragRef.current.active || zoom <= 1) return;
               const dx = event.clientX - dragRef.current.x;
               const dy = event.clientY - dragRef.current.y;
@@ -299,12 +342,16 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
               setPan((current) => ({ x: current.x + dx, y: current.y + dy }));
             }}
             onPointerUp={(event) => {
+              pointersRef.current.delete(event.pointerId);
+              pinchDistanceRef.current = 0;
               dragRef.current.active = false;
               if (event.currentTarget.hasPointerCapture(event.pointerId)) {
                 event.currentTarget.releasePointerCapture(event.pointerId);
               }
             }}
             onPointerCancel={() => {
+              pointersRef.current.clear();
+              pinchDistanceRef.current = 0;
               dragRef.current.active = false;
             }}
           >
@@ -316,7 +363,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             />
           </div>
           <p className="product-viewer__help">
-            Rueda o controles para ampliar · arrastra para recorrer · doble clic para alternar
+            Pellizca o usa los controles para ampliar · arrastra para recorrer · doble toque para alternar
           </p>
         </div>
       )}
