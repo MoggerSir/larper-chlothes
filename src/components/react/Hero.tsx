@@ -236,6 +236,50 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
             onUserInteraction={() => setInteractionNonce((value) => value + 1)}
           />
         </div>
+        <div className="hero__mobile-stage-meta" aria-hidden="true">
+          <span>LOOK {slide.index}</span>
+          <span>{slide.tag}</span>
+        </div>
+        <div className="hero__mobile-carousel" role="tablist" aria-label="Prendas destacadas">
+          <button className="hero__nav-btn" type="button" onClick={() => goTo(index - 1)} aria-label="Prenda anterior">
+            <Icon name="arrowLeft" size={16} />
+          </button>
+          <div className="hero__dots">
+            {slides.map((item, itemIndex) => (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={itemIndex === index}
+                aria-label={item.name}
+                className={`hero__dot ${itemIndex === index ? "is-active" : ""}`}
+                onClick={() => goTo(itemIndex)}
+              />
+            ))}
+          </div>
+          <button className="hero__nav-btn" type="button" onClick={() => goTo(index + 1)} aria-label="Siguiente prenda">
+            <Icon name="arrowRight" size={16} />
+          </button>
+        </div>
+        <button
+          key={slide.id}
+          type="button"
+          className="hero__mobile-summary"
+          onClick={() => setDetailsOpen(true)}
+          aria-label={`Ver detalles de ${slide.name}`}
+        >
+          <span className="hero__mobile-thumb">
+            <img src={slide.cardSrc} alt="" />
+          </span>
+          <span className="hero__mobile-product">
+            <small>{slide.label}</small>
+            <strong>{slide.name}</strong>
+            <span>{slide.priceLabel} MXN</span>
+          </span>
+          <span className="hero__mobile-open">
+            <Icon name="arrowUpRight" size={16} />
+          </span>
+        </button>
       </div>
 
       <div className="hero__ethos" data-hero-fade ref={ethosRef}>
