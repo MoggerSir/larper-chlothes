@@ -18,6 +18,7 @@ export function Lookbook({ imageSrc, lines }: LookbookProps) {
     const lineEls = section.querySelectorAll<HTMLElement>("[data-line]");
     const visual = section.querySelector<HTMLElement>("[data-lookbook-visual]");
     const image = section.querySelector<HTMLImageElement>("[data-lookbook-image]");
+    const progress = section.querySelector<HTMLElement>("[data-lookbook-progress]");
     if (!visual) return;
 
     const headerBar = document.querySelector<HTMLElement>(".site-header__bar");
@@ -61,25 +62,50 @@ export function Lookbook({ imageSrc, lines }: LookbookProps) {
         );
       }
 
-      lineEls.forEach((line) => {
-        const beat = line.closest<HTMLElement>("[data-lookbook-beat]");
-        if (!beat) return;
+      if (progress) {
         gsap.fromTo(
-          line,
-          { opacity: 0.22, y: 34, scale: 0.985 },
+          progress,
+          { scaleY: 0 },
           {
-            opacity: 1,
-            y: 0,
-            scale: 1,
+            scaleY: 1,
             ease: "none",
             scrollTrigger: {
-              trigger: beat,
-              start: "top 78%",
-              end: "center 54%",
-              scrub: 0.45,
+              trigger: section,
+              start: "top top",
+              end: "bottom bottom",
+              scrub: 0.25,
             },
           },
         );
+      }
+
+      lineEls.forEach((line) => {
+        const beat = line.closest<HTMLElement>("[data-lookbook-beat]");
+        if (!beat) return;
+        const counter = beat.querySelector<HTMLElement>(".lookbook__counter");
+        const accent = beat.querySelector<HTMLElement>(".lookbook__accent");
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: beat,
+              start: "top 80%",
+              end: "center 52%",
+              scrub: 0.45,
+            },
+          })
+          .fromTo(counter, { opacity: 0, x: -18 }, { opacity: 1, x: 0, ease: "none" }, 0)
+          .fromTo(
+            line,
+            { opacity: 0.16, y: 42, scale: 0.975 },
+            { opacity: 1, y: 0, scale: 1, ease: "none" },
+            0,
+          )
+          .fromTo(
+            accent,
+            { scaleX: 0, opacity: 0 },
+            { scaleX: 1, opacity: 1, ease: "none" },
+            0.18,
+          );
       });
     });
 
@@ -102,6 +128,21 @@ export function Lookbook({ imageSrc, lines }: LookbookProps) {
           />
         </div>
         <div className="lookbook__overlay" />
+        <div className="lookbook__effects" aria-hidden="true">
+          <span className="lookbook__orb lookbook__orb--one" />
+          <span className="lookbook__orb lookbook__orb--two" />
+          <svg className="lookbook__trace" viewBox="0 0 1440 900" preserveAspectRatio="none">
+            <path d="M-40 680 L310 520 L515 590 L805 300 L1480 150" />
+            <path d="M-40 742 L325 582 L528 650 L828 362 L1480 215" />
+          </svg>
+          <span className="lookbook__cross lookbook__cross--left" />
+          <span className="lookbook__cross lookbook__cross--right" />
+        </div>
+        <div className="lookbook__rail" aria-hidden="true">
+          <span>MANIFIESTO</span>
+          <i><b data-lookbook-progress /></i>
+          <span>04</span>
+        </div>
       </div>
       <div className="lookbook__copy">
         {lines.map((line, i) => (
@@ -112,6 +153,7 @@ export function Lookbook({ imageSrc, lines }: LookbookProps) {
             <p className="lookbook__line" data-line>
               {line}
             </p>
+            <span className="lookbook__accent" aria-hidden="true" />
           </div>
         ))}
       </div>
