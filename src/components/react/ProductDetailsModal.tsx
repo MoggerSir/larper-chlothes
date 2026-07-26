@@ -191,10 +191,30 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             <span>{product.tag}</span>
             <span>OBJETO {product.index}</span>
           </div>
-          <h2 id="product-modal-title">{product.name}</h2>
-          <p className="product-modal__label">{product.label} · {product.category}</p>
-          <p className="product-modal__price">{product.priceLabel} <small>MXN</small></p>
-          <p className="product-modal__description">{product.description}</p>
+          <div className="product-modal__priority">
+            <p className="product-modal__price">{product.priceLabel} <small>MXN</small></p>
+            <h2 id="product-modal-title">{product.name}</h2>
+            <p className="product-modal__label">{product.label} · {product.category}</p>
+          </div>
+
+          <fieldset className="product-modal__options product-modal__options--size">
+            <legend>
+              Talla disponible <a href="#guia-tallas">Guía de tallas</a>
+            </legend>
+            <div className="product-modal__size-row">
+              {product.sizes.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  className={size === item ? "is-selected" : ""}
+                  onClick={() => setSize(item)}
+                  aria-pressed={size === item}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          </fieldset>
 
           <fieldset className="product-modal__options">
             <legend>Color disponible</legend>
@@ -213,24 +233,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             </div>
           </fieldset>
 
-          <fieldset className="product-modal__options">
-            <legend>
-              Talla <a href="#guia-tallas">Guía de tallas</a>
-            </legend>
-            <div className="product-modal__size-row">
-              {product.sizes.map((item) => (
-                <button
-                  key={item}
-                  type="button"
-                  className={size === item ? "is-selected" : ""}
-                  onClick={() => setSize(item)}
-                  aria-pressed={size === item}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-          </fieldset>
+          <p className="product-modal__description">{product.description}</p>
 
           <div className="product-modal__stock">
             <span />
