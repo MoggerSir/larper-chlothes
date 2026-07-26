@@ -1,17 +1,24 @@
 .lookbook {
   position: relative;
   width: 100%;
-  max-width: none;
-  height: 100vh;
-  height: 100svh;
   min-height: 100svh;
-  overflow: hidden;
   color: var(--color-inverse-ink);
   background: var(--color-ink);
   isolation: isolate;
 }
 
-.lookbook__image {
+.lookbook__visual {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: var(--color-ink);
+}
+
+.lookbook__image,
+.lookbook__overlay {
   position: absolute;
   inset: 0;
 }
@@ -21,72 +28,90 @@
   height: 100%;
   object-fit: cover;
   object-position: top center;
-  filter: blur(1.8px);
+  filter: blur(1.6px);
   transform: scale(1.008);
+  will-change: transform;
 }
 
 .lookbook__overlay {
-  position: absolute;
-  inset: 0;
   background:
-    radial-gradient(
-      ellipse at center,
-      rgba(14, 14, 16, 0.34) 0%,
-      rgba(14, 14, 16, 0.2) 42%,
-      transparent 72%
-    ),
+    linear-gradient(90deg, rgba(9, 9, 11, 0.46), transparent 32%, transparent 68%, rgba(9, 9, 11, 0.38)),
+    radial-gradient(ellipse at center, rgba(14, 14, 16, 0.18) 0%, rgba(14, 14, 16, 0.36) 72%),
     linear-gradient(
       180deg,
-      rgba(14, 14, 16, 0.58) 0%,
-      rgba(14, 14, 16, 0.2) 32%,
-      rgba(14, 14, 16, 0.28) 68%,
-      rgba(14, 14, 16, 0.72) 100%
+      rgba(14, 14, 16, 0.62) 0%,
+      rgba(14, 14, 16, 0.18) 30%,
+      rgba(14, 14, 16, 0.26) 68%,
+      rgba(14, 14, 16, 0.76) 100%
     );
 }
 
 .lookbook__copy {
   position: relative;
   z-index: 2;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   width: 100%;
+  margin-top: -100svh;
+}
+
+.lookbook__beat {
+  position: relative;
+  min-height: 76svh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
   padding:
-    max(1.25rem, env(safe-area-inset-top))
+    max(6rem, env(safe-area-inset-top))
     max(var(--space-lg), env(safe-area-inset-right))
-    max(1.25rem, env(safe-area-inset-bottom))
+    max(4rem, env(safe-area-inset-bottom))
     max(var(--space-lg), env(safe-area-inset-left));
   text-align: center;
 }
 
+.lookbook__beat:first-child,
+.lookbook__beat:last-child {
+  min-height: 100svh;
+}
+
+.lookbook__counter {
+  margin-bottom: 1.15rem;
+  color: rgba(255, 250, 240, 0.72);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
 .lookbook__line {
-  position: absolute;
   width: min(90vw, 52rem);
   max-width: none;
+  margin: 0;
+  color: #fffaf0;
   font-family: var(--font-display);
-  font-weight: 500;
   font-size: clamp(2rem, 1.1rem + 3.6vw, 4.5rem);
+  font-weight: 500;
   letter-spacing: -0.01em;
   line-height: 1.08;
-  color: #fffaf0;
+  text-wrap: balance;
   text-shadow:
-    0 2px 3px rgba(0, 0, 0, 0.92),
-    0 0 12px rgba(255, 250, 240, 0.3),
-    0 0 26px rgba(255, 250, 240, 0.16);
-  opacity: 0;
-  transform: translateY(24px);
+    0 2px 3px rgba(0, 0, 0, 0.94),
+    0 0 12px rgba(255, 250, 240, 0.28),
+    0 0 26px rgba(255, 250, 240, 0.14);
+  will-change: transform, opacity;
 }
 
 @media (max-width: 40rem) {
-  .lookbook {
-    width: 100%;
-    height: 100svh;
-    min-height: 100svh;
+  .lookbook__image img {
+    object-position: 56% top;
   }
 
-  .lookbook__copy {
-    padding-inline: 1.25rem;
+  .lookbook__beat {
+    min-height: 82svh;
+    padding-inline: max(1.25rem, env(safe-area-inset-left));
+  }
+
+  .lookbook__beat:first-child,
+  .lookbook__beat:last-child {
+    min-height: 100svh;
   }
 
   .lookbook__line {
@@ -94,20 +119,25 @@
     font-size: clamp(2.1rem, 9.5vw, 3.35rem);
     line-height: 1.02;
   }
-
-  .lookbook__image img {
-    object-position: 56% top;
-  }
 }
 
 @media (max-height: 34rem) and (orientation: landscape) {
-  .lookbook,
-  .lookbook__copy {
+  .lookbook__beat,
+  .lookbook__beat:first-child,
+  .lookbook__beat:last-child {
     min-height: 100svh;
+    padding-block: 5rem 2rem;
   }
 
   .lookbook__line {
     width: min(78vw, 44rem);
     font-size: clamp(1.8rem, 6vw, 3rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lookbook__line {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
