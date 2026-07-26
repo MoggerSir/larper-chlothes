@@ -2,6 +2,21 @@ import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
+import { RectAreaLightUniformsLib } from "three-stdlib";
+
+// Required once for <rectAreaLight> to actually contribute light instead of
+// silently rendering as a no-op.
+RectAreaLightUniformsLib.init();
+
+const requestIdle: (cb: () => void) => number =
+  typeof window !== "undefined" && "requestIdleCallback" in window
+    ? (cb) => window.requestIdleCallback(cb, { timeout: 4000 })
+    : (cb) => window.setTimeout(cb, 1200);
+
+const cancelIdle: (id: number) => void =
+  typeof window !== "undefined" && "cancelIdleCallback" in window
+    ? (id) => window.cancelIdleCallback(id)
+    : (id) => window.clearTimeout(id);
 
 interface InteractionState {
   dragging: boolean;
@@ -175,10 +190,46 @@ export function HeroScene({
     moved: false,
   });
   useEffect(() => {
-    // useGLTF keeps the parsed scene, geometry, materials and textures in its
-    // shared in-memory cache. Subsequent mounts resolve immediately.
-    preloadSources.forEach((source) => useGLTF.preload(source));
-  }, [preloadSources]);
+    // The model on screen right now is already loading via useGLTF/Suspense.
+    // Fetching its immediate neighbors next means a prev/next tap almost
+    // never waits on a cold multi-MB download.
+    if (preloadSources.length < 2) return;
+    const currentIndex = preloadSources.indexOf(modelSrc);
+    if (currentIndex === -1) return;
+    const total = preloadSources.length;
+    const neighbors = [
+      preloadSources[(currentIndex + 1) % total],
+      preloadSources[(currentIndex - 1 + total) % total],
+    ];
+    neighbors.forEach((source) => {
+      if (source && source !== modelSrc) useGLTF.preload(source);
+    });
+  }, [modelSrc, preloadSources]);
+
+  useEffect(() => {
+    // Every other garment gets warmed once too, but only once the browser is
+    // idle and spaced out so it never competes with images/fonts needed for
+    // first paint. useGLTF keeps parsed results in a shared in-memory cache,
+    // so a later mount of any of these resolves immediately.
+    if (preloadSources.length === 0) return;
+    let cancelled = false;
+    const timers: number[] = [];
+    const idleId = requestIdle(() => {
+      preloadSources.forEach((source, i) => {
+        timers.push(
+          window.setTimeout(() => {
+            if (!cancelled) useGLTF.preload(source);
+          }, i * 500),
+        );
+      });
+    });
+    return () => {
+      cancelled = true;
+      cancelIdle(idleId);
+      timers.forEach((id) => window.clearTimeout(id));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     const handleModal = (event: Event) => {
       setModalPaused((event as CustomEvent<{ open: boolean }>).detail.open);

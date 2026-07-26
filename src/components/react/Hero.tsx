@@ -1,10 +1,17 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
 
 import { EASE, registerOrganicEasings } from "../../lib/animation/easings";
-import { HeroScene } from "./HeroScene";
 import { Icon } from "./Icon";
 import { ProductDetailsModal, type ProductDetailsData } from "./ProductDetailsModal";
+
+// three.js + @react-three/fiber + drei are the single heaviest chunk on the
+// site (~240KB gzipped). Loading it lazily lets the hero paint immediately
+// with a flat product photo, then upgrade to the interactive 3D viewer once
+// that chunk arrives instead of blocking first paint on it.
+const HeroScene = lazy(() =>
+  import("./HeroScene").then((mod) => ({ default: mod.HeroScene })),
+);
 
 registerOrganicEasings();
 
@@ -227,14 +234,25 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
 
       <div className="hero__model" data-hero-model>
         <div className="hero__model-stage" ref={modelStageRef}>
-          <HeroScene
-            modelSrc={slide.model3dSrc}
-            preloadSources={modelSources}
-            reducedMotion={reducedMotion}
-            paused={detailsOpen}
-            onOpenDetails={() => setDetailsOpen(true)}
-            onUserInteraction={() => setInteractionNonce((value) => value + 1)}
-          />
+          <Suspense
+            fallback={
+              <img
+                className="hero__model-placeholder"
+                src={slide.modelImageSrc}
+                alt={slide.name}
+                decoding="async"
+              />
+            }
+          >
+            <HeroScene
+              modelSrc={slide.model3dSrc}
+              preloadSources={modelSources}
+              reducedMotion={reducedMotion}
+              paused={detailsOpen}
+              onOpenDetails={() => setDetailsOpen(true)}
+              onUserInteraction={() => setInteractionNonce((value) => value + 1)}
+            />
+          </Suspense>
         </div>
         <div className="hero__mobile-stage-meta" aria-hidden="true">
           <span>LOOK {slide.index}</span>
