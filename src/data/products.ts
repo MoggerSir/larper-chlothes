@@ -1,20 +1,20 @@
 import type { ImageMetadata } from "astro";
 
-import chamarraGothicaFlat from "../assets/products/chamarra_Gothica.png";
-import chamarraGothicaModel from "../assets/products/chamarra_Gothica_modelo_pose2.png";
-import sudaderaGothicaFlat from "../assets/products/sudadera_gothica.png";
-import sudaderaGothicaModel from "../assets/products/sudadera_gothica_modelo.png";
-import sudaderaPatrioticaFlat from "../assets/products/sudadera_patriotica.png";
-import sudaderaPatrioticaModel from "../assets/products/sudadera_patriotica_modelo.png";
-import playeraLinuxFlat from "../assets/products/Playera_de_linux.png";
-import playeraLinuxModel from "../assets/products/Playera_de_linux_modelo.png";
-import pantalonSwagFlat from "../assets/products/pantalon_mezclilla_swag.png";
-import chamarraCueroCafeFlat from "../assets/products/chamarra_cuero_cafe.png";
-import chamarraCueroCafeModel from "../assets/products/chamarra_cuero_cafe_modelo.png";
-import pantalonCargoFlat from "../assets/products/pantalon_cargo.png";
-import pantalonCargoModel from "../assets/products/pantalon_cargo_modelo.png";
-import playeraEverlastFlat from "../assets/products/Playera_Everlast.png";
-import playeraEverlastModel from "../assets/products/Playera_Everlast_modelo.png";
+import chamarraGothicaFlat from "../assets/products/chamarra_Gothica.webp";
+import chamarraGothicaModel from "../assets/products/chamarra_Gothica_modelo_pose2.webp";
+import sudaderaGothicaFlat from "../assets/products/sudadera_gothica.webp";
+import sudaderaGothicaModel from "../assets/products/sudadera_gothica_modelo.webp";
+import sudaderaPatrioticaFlat from "../assets/products/sudadera_patriotica.webp";
+import sudaderaPatrioticaModel from "../assets/products/sudadera_patriotica_modelo.webp";
+import playeraLinuxFlat from "../assets/products/Playera_de_linux.webp";
+import playeraLinuxModel from "../assets/products/Playera_de_linux_modelo.webp";
+import pantalonSwagFlat from "../assets/products/pantalon_mezclilla_swag.webp";
+import chamarraCueroCafeFlat from "../assets/products/chamarra_cuero_cafe.webp";
+import chamarraCueroCafeModel from "../assets/products/chamarra_cuero_cafe_modelo.webp";
+import pantalonCargoFlat from "../assets/products/pantalon_cargo.webp";
+import pantalonCargoModel from "../assets/products/pantalon_cargo_modelo.webp";
+import playeraEverlastFlat from "../assets/products/Playera_Everlast.webp";
+import playeraEverlastModel from "../assets/products/Playera_Everlast_modelo.webp";
 
 export type ProductTag = "NUEVO" | "LIMITADA" | "MAS VENDIDA" | "RESTOCK";
 

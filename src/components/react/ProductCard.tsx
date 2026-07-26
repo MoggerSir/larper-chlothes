@@ -64,12 +64,19 @@ export function ProductCard({ product, onOpen }: ProductCardProps) {
         </button>
 
         <div className="product-card__media">
-          <img className="product-card__img product-card__img--flat" src={product.flatSrc} alt={product.name} loading="lazy" />
+          <img
+            className="product-card__img product-card__img--flat"
+            src={product.flatSrc}
+            alt={product.name}
+            loading="lazy"
+            decoding="async"
+          />
           <img
             className="product-card__img product-card__img--model"
             src={product.modelSrc}
             alt={`${product.name} puesta por modelo`}
             loading="lazy"
+            decoding="async"
           />
         </div>
 

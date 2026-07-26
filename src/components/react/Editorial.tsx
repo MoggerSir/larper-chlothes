@@ -90,7 +90,13 @@ export function Editorial({ imageSrc, index, name, colorway, priceLabel }: Edito
         <span className="editorial__image-index" aria-hidden="true">{index}</span>
         <span className="editorial__corner editorial__corner--tl" aria-hidden="true" />
         <span className="editorial__corner editorial__corner--br" aria-hidden="true" />
-        <img src={imageSrc} alt={name} data-editorial-image />
+        <img
+          src={imageSrc}
+          alt={name}
+          data-editorial-image
+          loading="lazy"
+          decoding="async"
+        />
         <div className="editorial__scroll-rail" aria-hidden="true">
           <span data-editorial-progress />
         </div>

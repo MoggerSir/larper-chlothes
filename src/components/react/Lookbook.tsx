@@ -67,7 +67,12 @@ export function Lookbook({ imageSrc, lines }: LookbookProps) {
   return (
     <section className="lookbook" ref={sectionRef} id="nosotros">
       <div className="lookbook__image" data-lookbook-image>
-        <img src={imageSrc} alt="Editorial Larper Chlothes" />
+        <img
+          src={imageSrc}
+          alt="Editorial Larper Chlothes"
+          loading="lazy"
+          decoding="async"
+        />
       </div>
       <div className="lookbook__overlay" />
       <div className="lookbook__copy">
