@@ -18,6 +18,7 @@ interface EditorialProps {
 
 export function Editorial({ imageSrc, index, name, colorway, priceLabel }: EditorialProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
+  const benefitText = `This ${colorway.toLowerCase()} piece is comfortable and useful in cool weather. It gives a quality garment another period of use. The store checks every item's condition and presents its history clearly. This system helps students buy distinctive clothes at a fair price.`;
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -113,10 +114,7 @@ export function Editorial({ imageSrc, index, name, colorway, priceLabel }: Edito
           {name}
         </h2>
         <p className="editorial__desc" data-reveal>
-          This {colorway.toLowerCase()} piece is comfortable and useful in cool
-          weather. It gives a quality garment another period of use. The store
-          checks every item's condition and presents its history clearly. This
-          system helps students buy distinctive clothes at a fair price.
+          {benefitText}
         </p>
         <div className="editorial__row" data-reveal>
           <span className="editorial__price">{priceLabel}</span>

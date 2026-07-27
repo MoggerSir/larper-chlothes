@@ -3,6 +3,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { EASE, registerOrganicEasings } from "../../lib/animation/easings";
+import { setSiteLanguage, type SiteLanguage } from "../../lib/i18n";
 import { Icon } from "./Icon";
 import { Logo } from "./Logo";
 
@@ -21,6 +22,17 @@ const NAV_LINKS = [
 export function Header() {
   const barRef = useRef<HTMLDivElement | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [language, setLanguage] = useState<SiteLanguage>("en");
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem("larper-language") === "es" ? "es" : "en";
+    setLanguage(saved);
+    const handleLanguage = (event: Event) => {
+      setLanguage((event as CustomEvent<SiteLanguage>).detail);
+    };
+    window.addEventListener("site-language-change", handleLanguage);
+    return () => window.removeEventListener("site-language-change", handleLanguage);
+  }, []);
 
   useEffect(() => {
     const bar = barRef.current;
@@ -80,6 +92,16 @@ export function Header() {
 
         <div className="site-header__utility">
           <span className="site-header__id eyebrow">campus · id 003.201</span>
+          <button
+            type="button"
+            className="site-header__language"
+            aria-label={language === "en" ? "Switch to Spanish" : "Cambiar a inglés"}
+            onClick={() => setSiteLanguage(language === "en" ? "es" : "en")}
+          >
+            <span className={language === "en" ? "is-active" : ""}>EN</span>
+            <i aria-hidden="true" />
+            <span className={language === "es" ? "is-active" : ""}>ES</span>
+          </button>
           <a href="#products" className="site-header__bag" aria-label="Shopping bag">
             <Icon name="bag" size={18} />
           </a>

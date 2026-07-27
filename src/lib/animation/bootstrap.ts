@@ -2,10 +2,15 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import { initSmoothScroll } from "./smoothScroll";
+import { initSiteLanguage } from "../i18n";
 
 function bootstrap() {
+  initSiteLanguage();
   const smoother = initSmoothScroll();
   let sectionJumpActive = false;
+  window.addEventListener("site-language-change", () => {
+    window.requestAnimationFrame(() => ScrollTrigger.refresh());
+  });
   window.addEventListener("product-modal:toggle", ((event: CustomEvent<{ open: boolean }>) => {
     smoother?.paused(event.detail.open);
   }) as EventListener);
