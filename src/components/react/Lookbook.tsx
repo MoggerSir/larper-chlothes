@@ -139,7 +139,7 @@ export function Lookbook({ imageSrc, lines }: LookbookProps) {
           <span className="lookbook__cross lookbook__cross--right" />
         </div>
         <div className="lookbook__rail" aria-hidden="true">
-          <span>MANIFIESTO</span>
+          <span>ABOUT US</span>
           <i><b data-lookbook-progress /></i>
           <span>04</span>
         </div>

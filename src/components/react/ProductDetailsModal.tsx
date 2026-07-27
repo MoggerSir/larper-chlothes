@@ -137,7 +137,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
           className="product-modal__close"
           type="button"
           onClick={requestClose}
-          aria-label="Cerrar detalle"
+          aria-label="Close product details"
           autoFocus
         >
           <Icon name="close" size={19} />
@@ -148,7 +148,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             className="product-modal__main-image"
             role="button"
             tabIndex={0}
-            aria-label={`Ampliar imagen de ${product.name}`}
+            aria-label={`Open a detailed view of ${product.name}`}
             onClick={openViewer}
             onKeyDown={(event) => {
               if (event.key === "Enter" || event.key === " ") {
@@ -160,18 +160,18 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             <img
               key={activeImage}
               src={activeImage === "flat" ? product.flatSrc : product.modelSrc}
-              alt={activeImage === "flat" ? product.name : `${product.name} puesta por modelo`}
+              alt={activeImage === "flat" ? product.name : `${product.name} worn by a model`}
             />
             <span className="product-modal__image-label">
-              {activeImage === "flat" ? "Vista de producto" : "Vista editorial"} · ampliar
+              {activeImage === "flat" ? "Product view" : "Worn view"} · enlarge
             </span>
           </div>
-          <div className="product-modal__thumbs" aria-label="Vistas del producto">
+          <div className="product-modal__thumbs" aria-label="Product views">
             <button
               type="button"
               className={activeImage === "flat" ? "is-active" : ""}
               onClick={() => setActiveImage("flat")}
-              aria-label="Ver prenda"
+              aria-label="View the item"
             >
               <img src={product.flatSrc} alt="" />
             </button>
@@ -179,7 +179,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
               type="button"
               className={activeImage === "model" ? "is-active" : ""}
               onClick={() => setActiveImage("model")}
-              aria-label="Ver prenda puesta"
+              aria-label="View the item worn"
             >
               <img src={product.modelSrc} alt="" />
             </button>
@@ -189,7 +189,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
         <div className="product-modal__content">
           <div className="product-modal__eyebrow">
             <span>{product.tag}</span>
-            <span>OBJETO {product.index}</span>
+            <span>ITEM {product.index}</span>
           </div>
           <div className="product-modal__priority">
             <p className="product-modal__price">{product.priceLabel} <small>MXN</small></p>
@@ -199,7 +199,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
 
           <fieldset className="product-modal__options product-modal__options--size">
             <legend>
-              Talla disponible <a href="#guia-tallas">Guía de tallas</a>
+              Available size <a href="#size-guide">Size guide</a>
             </legend>
             <div className="product-modal__size-row">
               {product.sizes.map((item) => (
@@ -217,7 +217,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
           </fieldset>
 
           <fieldset className="product-modal__options">
-            <legend>Color disponible</legend>
+            <legend>Available color</legend>
             <div className="product-modal__choice-row">
               {product.colors.map((item) => (
                 <button
@@ -237,17 +237,17 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
 
           <div className="product-modal__stock">
             <span />
-            En existencia · envío en 2–4 días hábiles
+            In stock · ships in 2–4 business days
           </div>
 
           <button className="product-modal__buy" type="button" disabled={!size}>
-            <span>{size ? "Añadir a la bolsa" : "Selecciona una talla"}</span>
+            <span>{size ? "Add to bag" : "Select a size"}</span>
             <span>{product.priceLabel}</span>
           </button>
 
           <div className="product-modal__assurances">
-            <p><Icon name="truck" size={16} /> Envíos a todo México</p>
-            <p><Icon name="shieldCheck" size={16} /> Compra protegida</p>
+            <p><Icon name="truck" size={16} /> Shipping across Mexico</p>
+            <p><Icon name="shieldCheck" size={16} /> Protected purchase</p>
           </div>
         </div>
       </section>
@@ -256,7 +256,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
           className="product-viewer"
           role="dialog"
           aria-modal="true"
-          aria-label={`Vista ampliada de ${product.name}`}
+          aria-label={`Detailed image of ${product.name}`}
           onMouseDown={(event) => {
             if (event.target === event.currentTarget) closeViewer();
           }}
@@ -271,7 +271,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             type="button"
             className="product-viewer__mobile-close"
             onClick={closeViewer}
-            aria-label="Cerrar imagen ampliada"
+            aria-label="Close detailed image"
           >
             <Icon name="close" size={20} />
           </button>
@@ -281,14 +281,14 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
               <small>{Math.round(zoom * 100)}%</small>
             </div>
             <div className="product-viewer__controls">
-              <button type="button" onClick={() => changeZoom(-0.35)} disabled={zoom <= 1} aria-label="Alejar">−</button>
+              <button type="button" onClick={() => changeZoom(-0.35)} disabled={zoom <= 1} aria-label="Zoom out">−</button>
               <output aria-live="polite">{Math.round(zoom * 100)}%</output>
-              <button type="button" onClick={() => changeZoom(0.35)} disabled={zoom >= 4} aria-label="Acercar">+</button>
+              <button type="button" onClick={() => changeZoom(0.35)} disabled={zoom >= 4} aria-label="Zoom in">+</button>
               <button type="button" onClick={() => {
                 setZoom(1);
                 setPan({ x: 0, y: 0 });
-              }}>Restablecer</button>
-              <button type="button" onClick={closeViewer} aria-label="Cerrar imagen ampliada">
+              }}>Reset</button>
+              <button type="button" onClick={closeViewer} aria-label="Close detailed image">
                 <Icon name="close" size={18} />
               </button>
             </div>
@@ -360,13 +360,13 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
           >
             <img
               src={activeImage === "flat" ? product.flatSrc : product.modelSrc}
-              alt={`${product.name} ampliada`}
+              alt={`Detailed view of ${product.name}`}
               draggable={false}
               style={{ transform: `translate3d(${pan.x}px, ${pan.y}px, 0) scale(${zoom})` }}
             />
           </div>
           <p className="product-viewer__help">
-            Pellizca o usa los controles para ampliar · arrastra para recorrer · doble toque para alternar
+            Pinch or use the controls to zoom · drag to explore · double tap to switch
           </p>
         </div>
       )}

@@ -101,26 +101,27 @@ export function Editorial({ imageSrc, index, name, colorway, priceLabel }: Edito
           <span data-editorial-progress />
         </div>
         <p className="editorial__scroll-label" aria-hidden="true">
-          Desliza para revelar
+          Scroll to inspect
         </p>
       </div>
       <div className="editorial__copy">
         <span className="eyebrow editorial__eyebrow" data-reveal>
           <Icon name="crown" size={13} strokeWidth={1.6} />
-          Pieza destacada · {index}
+          Benefits · featured item {index}
         </span>
         <h2 className="editorial__title" data-reveal>
           {name}
         </h2>
         <p className="editorial__desc" data-reveal>
-          {colorway}. Una sola pieza disponible, seleccionada dentro de nuestra
-          comunidad universitaria. Ropa de calidad con historia, lista para
-          encontrar una segunda vida.
+          This {colorway.toLowerCase()} piece is comfortable and useful in cool
+          weather. It gives a quality garment another period of use. The store
+          checks every item's condition and presents its history clearly. This
+          system helps students buy distinctive clothes at a fair price.
         </p>
         <div className="editorial__row" data-reveal>
           <span className="editorial__price">{priceLabel}</span>
-          <a href="#tienda" className="pill-btn pill-btn--solid">
-            Comprar ahora
+          <a href="#products" className="pill-btn pill-btn--solid">
+            View products
             <Icon name="arrowUpRight" size={14} />
           </a>
         </div>

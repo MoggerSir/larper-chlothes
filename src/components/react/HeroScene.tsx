@@ -151,7 +151,7 @@ function Loader() {
     <Html center>
       <div className="hero__loader">
         <span />
-        Cargando pieza
+        Loading item
       </div>
     </Html>
   );

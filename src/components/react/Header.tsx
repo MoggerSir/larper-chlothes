@@ -10,11 +10,12 @@ gsap.registerPlugin(ScrollTrigger);
 registerOrganicEasings();
 
 const NAV_LINKS = [
-  { label: "Inicio", href: "#top" },
-  { label: "Tienda", href: "#tienda" },
-  { label: "Colección", href: "#coleccion" },
-  { label: "Nosotros", href: "#nosotros" },
-  { label: "Contacto", href: "#contacto" },
+  { label: "Home", href: "#top" },
+  { label: "Inventory", href: "#inventory" },
+  { label: "Products", href: "#products" },
+  { label: "About Us", href: "#nosotros" },
+  { label: "Benefits", href: "#benefits" },
+  { label: "Contact", href: "#contacto" },
 ];
 
 export function Header() {
@@ -69,7 +70,7 @@ export function Header() {
       <div ref={barRef} className="site-header__bar">
         <Logo />
 
-        <nav className="site-header__nav" aria-label="Navegación principal">
+        <nav className="site-header__nav" aria-label="Main navigation">
           {NAV_LINKS.map((link) => (
             <a key={link.href} href={link.href}>
               {link.label}
@@ -78,14 +79,14 @@ export function Header() {
         </nav>
 
         <div className="site-header__utility">
-          <span className="site-header__id eyebrow">cuenta · id 003.201</span>
-          <a href="#tienda" className="site-header__bag" aria-label="Carrito">
+          <span className="site-header__id eyebrow">campus · id 003.201</span>
+          <a href="#products" className="site-header__bag" aria-label="Shopping bag">
             <Icon name="bag" size={18} />
           </a>
           <button
             type="button"
             className="site-header__toggle"
-            aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
           >
@@ -95,7 +96,7 @@ export function Header() {
       </div>
 
       <div className={`site-header__mobile ${menuOpen ? "is-open" : ""}`}>
-        <nav aria-label="Navegación móvil">
+        <nav aria-label="Mobile navigation">
           {NAV_LINKS.map((link) => (
             <a key={link.href} href={link.href} onClick={() => setMenuOpen(false)}>
               {link.label}

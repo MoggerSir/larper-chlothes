@@ -230,7 +230,9 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
         <span className="hero__word" data-hero-word>LARPER</span>
         <span className="hero__word" data-hero-word>CHLOTHES</span>
       </div>
-      <h1 className="visually-hidden">Larper Chlothes — ropa sin ruido, solo actitud</h1>
+      <h1 className="visually-hidden">
+        Welcome to my store! Larper's campus closet sells second-hand clothes.
+      </h1>
 
       <div className="hero__model" data-hero-model>
         <div className="hero__model-stage" ref={modelStageRef}>
@@ -258,8 +260,8 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
           <span>LOOK {slide.index}</span>
           <span>{slide.tag}</span>
         </div>
-        <div className="hero__mobile-carousel" role="tablist" aria-label="Prendas destacadas">
-          <button className="hero__nav-btn" type="button" onClick={() => goTo(index - 1)} aria-label="Prenda anterior">
+        <div className="hero__mobile-carousel" role="tablist" aria-label="Featured clothes">
+          <button className="hero__nav-btn" type="button" onClick={() => goTo(index - 1)} aria-label="Previous item">
             <Icon name="arrowLeft" size={16} />
           </button>
           <div className="hero__dots">
@@ -275,7 +277,7 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
               />
             ))}
           </div>
-          <button className="hero__nav-btn" type="button" onClick={() => goTo(index + 1)} aria-label="Siguiente prenda">
+          <button className="hero__nav-btn" type="button" onClick={() => goTo(index + 1)} aria-label="Next item">
             <Icon name="arrowRight" size={16} />
           </button>
         </div>
@@ -284,7 +286,7 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
           type="button"
           className="hero__mobile-summary"
           onClick={() => setDetailsOpen(true)}
-          aria-label={`Ver detalles de ${slide.name}`}
+          aria-label={`View details for ${slide.name}`}
         >
           <span className="hero__mobile-thumb">
             <img src={slide.cardSrc} alt="" />
@@ -302,8 +304,8 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
 
       <div className="hero__ethos" data-hero-fade ref={ethosRef}>
         <span className="hero__ethos-icon"><Icon name="ring" size={22} strokeWidth={1.3} /></span>
-        <p className="hero__ethos-title">Ropa sin ruido.<br />Solo actitud.</p>
-        <p className="hero__ethos-copy">{slide.description}</p>
+        <p className="hero__ethos-title">Welcome to my store!<br />Larper's campus closet.</p>
+        <p className="hero__ethos-copy">{slide.description.split(".")[0]}.</p>
       </div>
 
       <article className="hero__card" data-hero-fade ref={cardRef}>
@@ -324,15 +326,15 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
           className="pill-btn pill-btn--solid hero__card-cta"
           onClick={() => setDetailsOpen(true)}
         >
-          Ver prenda <Icon name="arrowUpRight" size={14} />
+          View item <Icon name="arrowUpRight" size={14} />
         </button>
       </article>
 
       <div className="hero__carousel" data-hero-fade>
-        <button className="hero__nav-btn" type="button" onClick={() => goTo(index - 1)} aria-label="Prenda anterior">
+        <button className="hero__nav-btn" type="button" onClick={() => goTo(index - 1)} aria-label="Previous item">
           <Icon name="arrowLeft" size={16} />
         </button>
-        <div className="hero__dots" role="tablist" aria-label="Prendas destacadas">
+        <div className="hero__dots" role="tablist" aria-label="Featured clothes">
           {slides.map((item, itemIndex) => (
             <button
               key={item.id}
@@ -345,7 +347,7 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
             />
           ))}
         </div>
-        <button className="hero__nav-btn" type="button" onClick={() => goTo(index + 1)} aria-label="Siguiente prenda">
+        <button className="hero__nav-btn" type="button" onClick={() => goTo(index + 1)} aria-label="Next item">
           <Icon name="arrowRight" size={16} />
         </button>
       </div>

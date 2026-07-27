@@ -3,23 +3,35 @@ import { Icon } from "../react/Icon";
 import { Logo } from "../react/Logo";
 
 const trustPoints = [
-  { icon: "lock" as const, label: "Pago 100% seguro" },
-  { icon: "shieldCheck" as const, label: "Calidad garantizada" },
-  { icon: "truck" as const, label: "Envío a todo México" },
+  { icon: "lock" as const, label: "Secure checkout" },
+  { icon: "shieldCheck" as const, label: "Condition checked" },
+  { icon: "truck" as const, label: "Shipping across Mexico" },
 ];
 
 const columns = [
   {
-    title: "Tienda",
-    links: ["Chamarras", "Sudaderas", "Playeras", "Pantalones", "Novedades"],
+    title: "Store",
+    links: [
+      { label: "Inventory", href: "#inventory" },
+      { label: "Products", href: "#products" },
+      { label: "Benefits", href: "#benefits" },
+    ],
   },
   {
-    title: "Marca",
-    links: ["Nosotros", "Materiales", "Lookbook", "Tiendas físicas"],
+    title: "Project",
+    links: [
+      { label: "About Us", href: "#nosotros" },
+      { label: "Student sellers", href: "#nosotros" },
+      { label: "Item histories", href: "#products" },
+    ],
   },
   {
-    title: "Ayuda",
-    links: ["Envíos", "Cambios y devoluciones", "Guía de tallas", "Contacto"],
+    title: "Help",
+    links: [
+      { label: "Size guide", href: "#products" },
+      { label: "Shipping", href: "#contacto" },
+      { label: "Contact", href: "#contacto" },
+    ],
   },
 ];
 ---
@@ -40,8 +52,8 @@ const columns = [
     <div class="site-footer__brand">
       <Logo tone="inverse" />
       <p class="site-footer__tagline">
-        Ropa sin ruido. Solo actitud. Diseñada en Cancún, hecha para el
-        underground.
+        The students' second-hand clothing store in Cancún. Every item has one
+        owner, one history, and one available unit.
       </p>
       <div class="site-footer__social">
         <a href="#" aria-label="Instagram"><Icon name="instagram" size={18} /></a>
@@ -50,7 +62,7 @@ const columns = [
       </div>
     </div>
 
-    <nav class="site-footer__columns" aria-label="Enlaces del sitio">
+    <nav class="site-footer__columns" aria-label="Site links">
       {
         columns.map((col) => (
           <div class="site-footer__col">
@@ -58,7 +70,7 @@ const columns = [
             <ul>
               {col.links.map((link) => (
                 <li>
-                  <a href="#tienda">{link}</a>
+                  <a href={link.href}>{link.label}</a>
                 </li>
               ))}
             </ul>
@@ -69,9 +81,9 @@ const columns = [
   </div>
 
   <div class="container site-footer__bottom">
-    <p>&copy; {new Date().getFullYear()} Larper Chlothes. Todos los derechos reservados.</p>
+    <p>&copy; {new Date().getFullYear()} Larper Chlothes. Student project.</p>
     <a href="#top" class="site-footer__top-link">
-      Volver arriba
+      Back to top
       <Icon name="arrowUpRight" size={13} />
     </a>
   </div>

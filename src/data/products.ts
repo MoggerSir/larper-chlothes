@@ -16,7 +16,7 @@ import pantalonCargoModel from "../assets/products/pantalon_cargo_modelo.webp";
 import playeraEverlastFlat from "../assets/products/Playera_Everlast.webp";
 import playeraEverlastModel from "../assets/products/Playera_Everlast_modelo.webp";
 
-export type ProductTag = "NUEVO" | "LIMITADA" | "MAS VENDIDA" | "RESTOCK";
+export type ProductTag = "NEW TO STORE" | "ONE OF ONE" | "STUDENT PICK" | "AVAILABLE";
 
 export interface Product {
   id: string;
@@ -75,90 +75,90 @@ function createProduct(input: ProductInput, position: number): Product {
 const catalogInput: ProductInput[] = [
   {
     name: "Trenchie Gothic Zip",
-    label: "Chamarra oversize",
-    category: "Chamarras",
+    label: "Second-hand oversized jacket",
+    category: "Jackets",
     price: 1450,
-    tag: "LIMITADA",
-    colorway: "Vintage wash / negro",
+    tag: "ONE OF ONE",
+    colorway: "Vintage brown / black",
     description:
-      "Chamarra con capucha en lavado vintage, estampado gótico a doble cara y cierre completo. Silueta oversize, caída pesada.",
+      "This second-hand jacket is vintage brown and black, and the jacket's size is M. The jacket's price is $1,450 MXN. These printed panels and that full zipper are in good condition. A student bought it two years ago and wore it on campus. It was the student's favorite winter jacket, but it was not used last year.",
     images: { flat: chamarraGothicaFlat, model: chamarraGothicaModel },
   },
   {
     name: "Atrocity Layered Tee",
-    label: "Playera de manga larga",
-    category: "Playeras",
+    label: "Second-hand layered T-shirt",
+    category: "T-shirts",
     price: 850,
-    tag: "MAS VENDIDA",
-    colorway: "Negro / blanco",
+    tag: "STUDENT PICK",
+    colorway: "Black / white",
     description:
-      "Playera de capas falsas con gráfico gótico serigrafiado al frente. Algodón pesado, corte oversize, mangas contraste.",
+      "This second-hand T-shirt is black and white, and the T-shirt's size is L. Its price is $850 MXN. These white sleeves are soft, and that front print is still clear. Its first owner bought it in 2023 and used it at concerts. It was an expensive piece when it was new, but the sleeves were always comfortable.",
     images: { flat: sudaderaGothicaFlat, model: sudaderaGothicaModel },
   },
   {
     name: "Vice Quarter-Zip",
-    label: "Sudadera 1/4 cierre",
-    category: "Sudaderas",
+    label: "Second-hand quarter-zip sweatshirt",
+    category: "Sweatshirts",
     price: 980,
-    tag: "NUEVO",
-    colorway: "Azul marino",
+    tag: "NEW TO STORE",
+    colorway: "Navy blue",
     description:
-      "Sudadera de cuello alto con medio cierre, parche bordado y bandera en la manga. Felpa gruesa cepillada por dentro.",
+      "This second-hand sweatshirt is navy blue, and the sweatshirt's size is M. The sweatshirt's price is $980 MXN. This embroidered patch is clean, and these cuffs are in very good condition. A student bought it for a school trip and wore it during one cold semester. It was warm and useful, and there were no broken parts.",
     images: { flat: sudaderaPatrioticaFlat, model: sudaderaPatrioticaModel },
   },
   {
     name: "Arch Terminal Tee",
-    label: "Playera básica",
-    category: "Playeras",
+    label: "Second-hand graphic T-shirt",
+    category: "T-shirts",
     price: 550,
-    tag: "RESTOCK",
-    colorway: "Negro",
+    tag: "AVAILABLE",
+    colorway: "Black",
     description:
-      "Playera de algodón 100% con gráfico Arch Linux al pecho. Corte recto, cuello redondo reforzado, para uso diario.",
+      "This second-hand T-shirt is black, and the T-shirt's size is M. The T-shirt's price is $550 MXN. That blue Arch Linux logo is bright, and these seams are strong. Its previous owner bought it in 2022 and wore it in the computer lab. It was a simple daily shirt, and it was easy to combine with jeans.",
     images: { flat: playeraLinuxFlat, model: playeraLinuxModel },
   },
   {
     name: "Nocturne Leather Jacket",
-    label: "Chamarra de cuero",
-    category: "Chamarras",
+    label: "Second-hand leather jacket",
+    category: "Jackets",
     price: 1890,
-    tag: "LIMITADA",
-    colorway: "Café envejecido",
+    tag: "ONE OF ONE",
+    colorway: "Aged brown",
     description:
-      "Chamarra de cuero café con acabado envejecido, estructura amplia y presencia pesada. Una pieza de carácter oscuro diseñada para dominar la silueta.",
+      "This second-hand leather jacket is aged brown, and the jacket's size is L. The jacket's price is $1,890 MXN. These leather panels have natural marks, and that metal zipper works well. A student found it in a local vintage shop and wore it for two years. It was his graduation jacket, and the shoulders were already slightly worn.",
     images: { flat: chamarraCueroCafeFlat, model: chamarraCueroCafeModel },
   },
   {
     name: "Riot Cargo Denim",
-    label: "Pantalón mezclilla",
-    category: "Pantalones",
+    label: "Second-hand denim pants",
+    category: "Pants",
     price: 1100,
-    tag: "NUEVO",
-    colorway: "Negro / rojo",
+    tag: "NEW TO STORE",
+    colorway: "Black / red",
     description:
-      "Pantalón cargo de mezclilla rígida con pespunte de contraste y parche gráfico grafiti. Pierna ancha, bolsillos utilitarios.",
+      "These second-hand denim pants are black and red, and the pants' size is 32. Their price is $1,100 MXN. These wide legs are strong, and that red patch gives the pair a clear identity. A design student bought them in 2023 and changed the stitching by hand. They were part of a class project, and they were only worn a few times.",
     images: { flat: pantalonSwagFlat, model: pantalonSwagFlat },
   },
   {
     name: "Shadow Utility Cargo",
-    label: "Pantalón cargo",
-    category: "Pantalones",
+    label: "Second-hand cargo pants",
+    category: "Pants",
     price: 1050,
-    tag: "LIMITADA",
-    colorway: "Negro desgastado",
+    tag: "ONE OF ONE",
+    colorway: "Faded black",
     description:
-      "Pantalón cargo de corte amplio con bolsillos utilitarios y acabado negro desgastado. Una pieza única, resistente y lista para una segunda vida.",
+      "These second-hand cargo pants are faded black, and the pants' size is 30. The pants' price is $1,050 MXN. These utility pockets are useful, and that washed finish is part of the original look. Their first owner bought them for photography work and used them around campus. They were practical and durable, but they were not used this semester.",
     images: { flat: pantalonCargoFlat, model: pantalonCargoModel },
   },
   {
     name: "Everlast Fight Tee",
-    label: "Playera gráfica",
-    category: "Playeras",
+    label: "Second-hand sports T-shirt",
+    category: "T-shirts",
     price: 720,
-    tag: "NUEVO",
-    colorway: "Negro / blanco",
+    tag: "NEW TO STORE",
+    colorway: "Black / white",
     description:
-      "Playera Everlast de carácter deportivo con gráfico frontal contundente y silueta relajada. Pieza única recuperada para volver a destacar.",
+      "This second-hand sports T-shirt is black and white, and the T-shirt's size is L. The T-shirt's price is $720 MXN. This Everlast graphic is in good condition, and these sleeves keep their relaxed shape. A student bought it at a boxing event and wore it for weekend training. It was part of the student's sports wardrobe, but it was not worn last year.",
     images: { flat: playeraEverlastFlat, model: playeraEverlastModel },
   },
 ];
@@ -168,7 +168,7 @@ export const products: Product[] = catalogInput.map((input, i) =>
 );
 
 export function formatPrice(product: Pick<Product, "price" | "currency">): string {
-  return new Intl.NumberFormat("es-MX", {
+  return new Intl.NumberFormat("en-MX", {
     style: "currency",
     currency: product.currency,
     maximumFractionDigits: 0,

@@ -134,7 +134,7 @@
 }
 
 .editorial__copy::before {
-  content: "SELECCIÓN  /  UNIVERSITARIA";
+  content: "STUDENT  /  SELECTION";
   display: block;
   padding-bottom: 1.15rem;
   border-bottom: 1px solid var(--color-line);
@@ -180,7 +180,7 @@
 }
 
 @media (max-width: 61.999rem) {
-  #coleccion.section {
+  #benefits.section {
     padding-top: 2.75rem;
   }
 

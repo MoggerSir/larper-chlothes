@@ -36,7 +36,7 @@ export function ProductStrip({ items, speed = 55 }: ProductStripProps) {
     <div className="product-strip">
       <div className="product-strip__track" ref={trackRef}>
         {loop.map((item, i) => (
-          <a className="product-strip__item" href="#tienda" key={`${item.id}-${i}`}>
+          <a className="product-strip__item" href="#products" key={`${item.id}-${i}`}>
             <span className="product-strip__thumb">
               <span className="product-strip__index eyebrow">{item.index}</span>
               <img src={item.flatSrc} alt={item.name} loading="lazy" />

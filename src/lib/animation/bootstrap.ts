@@ -104,7 +104,7 @@ function bootstrap() {
       }
 
       // The landing remains a single location; section navigation should not
-      // look like a route change or leave stale hashes such as #guia-tallas.
+      // look like a route change or leave stale hashes such as #size-guide.
       window.history.replaceState(
         window.history.state,
         "",

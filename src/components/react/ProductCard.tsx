@@ -11,10 +11,10 @@ interface ProductCardProps {
 }
 
 const TAG_ICON: Record<string, IconName> = {
-  NUEVO: "sparks",
-  LIMITADA: "crown",
-  "MAS VENDIDA": "medal",
-  RESTOCK: "package",
+  "NEW TO STORE": "sparks",
+  "ONE OF ONE": "crown",
+  "STUDENT PICK": "medal",
+  AVAILABLE: "package",
 };
 
 /**
@@ -32,7 +32,7 @@ export function ProductCard({ product, onOpen }: ProductCardProps) {
       data-reveal
       role="button"
       tabIndex={0}
-      aria-label={`Ver detalles de ${product.name}`}
+      aria-label={`View details for ${product.name}`}
       onClick={() => onOpen(product)}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
@@ -54,7 +54,7 @@ export function ProductCard({ product, onOpen }: ProductCardProps) {
           type="button"
           className={`product-card__save ${saved ? "is-saved" : ""}`}
           aria-pressed={saved}
-          aria-label={saved ? `Quitar ${product.name} de guardados` : `Guardar ${product.name}`}
+          aria-label={saved ? `Remove ${product.name} from saved items` : `Save ${product.name}`}
           onClick={(event) => {
             event.stopPropagation();
             setSaved((v) => !v);
@@ -74,13 +74,13 @@ export function ProductCard({ product, onOpen }: ProductCardProps) {
           <img
             className="product-card__img product-card__img--model"
             src={product.modelSrc}
-            alt={`${product.name} puesta por modelo`}
+            alt={`${product.name} worn by a model`}
             loading="lazy"
             decoding="async"
           />
         </div>
 
-        <button type="button" className="product-card__add" aria-label={`Ver detalles de ${product.name}`}>
+        <button type="button" className="product-card__add" aria-label={`View details for ${product.name}`}>
           <Icon name="plus" size={16} />
         </button>
       </div>

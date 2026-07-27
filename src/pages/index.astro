@@ -50,7 +50,7 @@ const heroSlides = await Promise.all(
       modelImageSrc: modelImage.src,
       label: product.label,
       category: product.category,
-      sizes: product.category === "Pantalones" ? ["28", "30", "32", "34", "36"] : ["CH", "M", "G", "XG"],
+      sizes: product.category === "Pants" ? ["28", "30", "32", "34", "36"] : ["S", "M", "L", "XL"],
       colors: product.colorway.split(" / "),
     };
   }),
@@ -72,7 +72,7 @@ const productCards = await Promise.all(
       description: product.description,
       flatSrc: flat.src,
       modelSrc: model.src,
-      sizes: product.category === "Pantalones" ? ["28", "30", "32", "34", "36"] : ["CH", "M", "G", "XG"],
+      sizes: product.category === "Pants" ? ["28", "30", "32", "34", "36"] : ["S", "M", "L", "XL"],
       colors: product.colorway.split(" / "),
     };
   }),
@@ -81,18 +81,39 @@ const productCards = await Promise.all(
 ---
 
 <Layout
-  title="Larper Chlothes — Ropa sin ruido, solo actitud"
-  description="Ropa única de estudiantes universitarios: prendas con historia, calidad y una segunda vida dentro de la comunidad."
+  title="Larper Chlothes — The Students' Second-Hand Store"
+  description="A one-page store for second-hand clothes from university students in Cancún. Every item has a clear price, size, color, condition, and history."
 >
   <Hero client:load slides={heroSlides} />
 
-  <section class="section" id="tienda">
+  <section class="section" id="inventory">
     <div class="container">
-      <div class="section-head">
-        <h2 class="section-head__title">La colección completa</h2>
+      <div class="section-head inventory-intro">
+        <div>
+          <span class="eyebrow">Current inventory</span>
+          <h2 class="section-head__title">What is available today</h2>
+        </div>
         <p class="section-head__copy">
-          Seis piezas, producción limitada. Pasa el cursor para ver cada
-          prenda puesta.
+          There are eight second-hand pieces in this collection. There are
+          jackets, T-shirts, sweatshirts, and pants. There is only one unit of
+          every style. There are clear details about each item's color, size,
+          condition, price, and previous use.
+        </p>
+      </div>
+      <div class="inventory-facts" aria-label="Inventory summary">
+        <p><strong>08</strong><span>There are eight pieces.</span></p>
+        <p><strong>01</strong><span>There is one of each.</span></p>
+        <p><strong>100%</strong><span>There are only student listings.</span></p>
+        <p><strong>MXN</strong><span>There is a clear price for every item.</span></p>
+      </div>
+      <div class="section-head section-head--products" id="products">
+        <div>
+          <span class="eyebrow">Products</span>
+          <h2 class="section-head__title">The students' current edit</h2>
+        </div>
+        <p class="section-head__copy">
+          This collection comes from students in our university community.
+          Open a product to read the garment's full history and condition.
         </p>
       </div>
       <ProductGrid client:visible products={productCards} />
@@ -103,14 +124,14 @@ const productCards = await Promise.all(
     client:visible
     imageSrc={lookbookModelImg.src}
     lines={[
-      "Una prenda. Una sola oportunidad.",
-      "Segunda vida para ropa con historia.",
-      "Calidad que merece seguir circulando.",
-      "De estudiantes, para estudiantes.",
+      "Our store was a small campus idea.",
+      "These clothes were part of a student's daily life.",
+      "Every piece was checked before it entered the store.",
+      "Now it is ready for another student's story.",
     ]}
   />
 
-  <section class="section" id="coleccion">
+  <section class="section" id="benefits">
     <div class="container">
       <Editorial
         client:visible
