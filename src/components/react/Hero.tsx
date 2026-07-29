@@ -228,7 +228,7 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
     >
       <div className="hero__type" aria-hidden="true">
         <span className="hero__word" data-hero-word>LARPER</span>
-        <span className="hero__word" data-hero-word>CHLOTHES</span>
+        <span className="hero__word" data-hero-word>CLOTHES</span>
       </div>
       <h1 className="visually-hidden">
         Welcome to my store! Larper's campus closet sells second-hand clothes.

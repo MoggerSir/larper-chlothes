@@ -11,8 +11,8 @@ let observer: MutationObserver | null = null;
 let applying = false;
 
 const ES: Record<string, string> = {
-  "Larper Chlothes — The Students' Second-Hand Store":
-    "Larper Chlothes — La tienda de segunda mano de los estudiantes",
+  "Larper Clothes — The Students' Second-Hand Store":
+    "Larper Clothes — La tienda de segunda mano de los estudiantes",
   "A one-page store for second-hand clothes from university students in Cancún. Every item has a clear price, size, color, condition, and history.":
     "Una tienda de una sola página para ropa de segunda mano de estudiantes universitarios en Cancún. Cada prenda tiene precio, talla, color, estado e historia claros.",
   Home: "Inicio",
@@ -181,8 +181,8 @@ function translateString(value: string): string {
     .replace(/^(.+) worn by a model$/, "$1 puesta por un modelo")
     .replace(/^Benefits · featured item (.+)$/, "Beneficios · prenda destacada $1")
     .replace(
-      /^© (\d{4}) Larper Chlothes\. Student project\.$/,
-      "© $1 Larper Chlothes. Proyecto estudiantil.",
+      /^© (\d{4}) Larper Clothes\. Student project\.$/,
+      "© $1 Larper Clothes. Proyecto estudiantil.",
     );
 }
 

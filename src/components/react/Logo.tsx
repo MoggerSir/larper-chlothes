@@ -31,7 +31,7 @@ export function Logo({ tone = "ink", className }: LogoProps) {
           lineHeight: 1,
         }}
       >
-        LARPER<span style={{ opacity: 0.55 }}>&nbsp;CHLOTHES</span>
+        LARPER<span style={{ opacity: 0.55 }}>&nbsp;CLOTHES</span>
       </span>
     </a>
   );

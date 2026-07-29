@@ -237,9 +237,26 @@
 }
 
 @media (min-width: 68rem) {
+  .site-header__bar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    justify-content: initial;
+  }
+
+  .site-header__bar > a {
+    justify-self: start;
+  }
+
   .site-header__nav {
     display: flex;
+    justify-self: center;
+    white-space: nowrap;
   }
+
+  .site-header__utility {
+    justify-self: end;
+  }
+
   .site-header__id {
     display: block;
   }

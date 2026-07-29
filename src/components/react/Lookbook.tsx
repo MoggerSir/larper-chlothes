@@ -121,7 +121,7 @@ export function Lookbook({ imageSrc, lines }: LookbookProps) {
         <div className="lookbook__image">
           <img
             src={imageSrc}
-            alt="Editorial Larper Chlothes"
+            alt="Editorial Larper Clothes"
             loading="lazy"
             decoding="async"
             data-lookbook-image
