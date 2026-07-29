@@ -19,8 +19,8 @@
   isolation: isolate;
   overflow: hidden;
   pointer-events: auto;
+  width: calc(100% - (var(--bar-inset) * 2));
   margin: var(--bar-inset) auto 0;
-  margin-inline: var(--bar-inset);
   max-width: calc(var(--content-max) - (var(--bar-inset) * 2));
   display: flex;
   align-items: center;
