@@ -36,16 +36,36 @@ interface GarmentProps {
   src: string;
   interaction: React.MutableRefObject<InteractionState>;
   reducedMotion: boolean;
+  entranceDelay: number;
 }
 
-function Garment({ src, interaction, reducedMotion }: GarmentProps) {
+function Garment({ src, interaction, reducedMotion, entranceDelay }: GarmentProps) {
   const { scene } = useGLTF(src);
   const group = useRef<THREE.Group>(null);
+  const revealElapsed = useRef(0);
+  const revealComplete = useRef(reducedMotion);
   const viewport = useThree((state) => state.viewport);
-  const { model, center, dimensions } = useMemo(() => {
+  const { model, center, dimensions, materials } = useMemo(() => {
     const clone = scene.clone(true);
+    const clonedMaterials: THREE.Material[] = [];
     clone.traverse((object) => {
       if (object instanceof THREE.Mesh) {
+        const sourceMaterials = Array.isArray(object.material)
+          ? object.material
+          : [object.material];
+        const meshMaterials = sourceMaterials.map((material) => {
+          const copy = material.clone();
+          if (copy instanceof THREE.MeshStandardMaterial) {
+            copy.userData.revealEmissive = copy.emissive.clone();
+            copy.userData.revealEmissiveIntensity = copy.emissiveIntensity;
+          }
+          copy.transparent = true;
+          copy.opacity = 0;
+          copy.depthWrite = false;
+          clonedMaterials.push(copy);
+          return copy;
+        });
+        object.material = Array.isArray(object.material) ? meshMaterials : meshMaterials[0];
         object.castShadow = true;
         object.receiveShadow = true;
       }
@@ -56,6 +76,7 @@ function Garment({ src, interaction, reducedMotion }: GarmentProps) {
       model: clone,
       center: bounds.getCenter(new THREE.Vector3()),
       dimensions: size,
+      materials: clonedMaterials,
     };
   }, [scene]);
   const autoAngle = useRef(0);
@@ -64,6 +85,8 @@ function Garment({ src, interaction, reducedMotion }: GarmentProps) {
   useEffect(() => {
     autoAngle.current = 0;
     floatPhase.current = 0;
+    revealElapsed.current = 0;
+    revealComplete.current = reducedMotion;
     resumeDelay.current = 0.7;
     interaction.current.dragging = false;
     interaction.current.returning = true;
@@ -72,7 +95,12 @@ function Garment({ src, interaction, reducedMotion }: GarmentProps) {
     interaction.current.currentYaw = 0;
     interaction.current.currentPitch = 0;
     if (group.current) group.current.rotation.set(0, 0, 0);
-  }, [src, interaction]);
+    materials.forEach((material) => {
+      material.transparent = !reducedMotion;
+      material.opacity = reducedMotion ? 1 : 0;
+      material.depthWrite = reducedMotion;
+    });
+  }, [src, interaction, materials, reducedMotion]);
   // Fit against both axes. Some assets contain a full model in a wide pose,
   // so height-only fitting can leave arms or legs outside the canvas.
   const compactViewport = viewport.width < 5;
@@ -92,6 +120,60 @@ function Garment({ src, interaction, reducedMotion }: GarmentProps) {
     : 0;
   useFrame((_, delta) => {
     if (!group.current) return;
+    if (!revealComplete.current) {
+      revealElapsed.current += Math.min(delta, 0.05);
+      const localTime = revealElapsed.current - entranceDelay;
+      if (localTime <= 0) {
+        group.current.visible = false;
+        return;
+      }
+
+      group.current.visible = true;
+      const progress = THREE.MathUtils.clamp(localTime / 1.62, 0, 1);
+      const smooth = progress * progress * (3 - 2 * progress);
+      const wave = Math.sin(progress * Math.PI);
+      const settle = Math.sin(progress * Math.PI * 3.25) * (1 - progress);
+
+      // This is the actual Three.js garment group: it materializes as a thin,
+      // luminous vertical silhouette, unfolds, spins into place and settles.
+      group.current.scale.set(
+        scale * (0.16 + smooth * 0.84 + wave * 0.055),
+        scale * (1.48 - smooth * 0.48 + settle * 0.065),
+        scale * (0.16 + smooth * 0.84 + wave * 0.055),
+      );
+      group.current.position.y =
+        baseYOffset - (1 - smooth) * viewport.height * 0.22 + wave * 0.11;
+      group.current.rotation.y = (1 - smooth) * -Math.PI * 1.15 + settle * 0.16;
+      group.current.rotation.z = settle * -0.045;
+      materials.forEach((material) => {
+        material.opacity = THREE.MathUtils.smoothstep(progress, 0.03, 0.56);
+        if (material instanceof THREE.MeshStandardMaterial) {
+          const original = material.userData.revealEmissive as THREE.Color;
+          const glowStrength = Math.sin(THREE.MathUtils.clamp(progress / 0.78, 0, 1) * Math.PI);
+          material.emissive.copy(original).lerp(new THREE.Color("#ff684c"), glowStrength * 0.72);
+          material.emissiveIntensity =
+            (material.userData.revealEmissiveIntensity as number) + glowStrength * 2.1;
+        }
+      });
+
+      if (progress >= 1) {
+        revealComplete.current = true;
+        group.current.scale.setScalar(scale);
+        group.current.position.y = baseYOffset;
+        group.current.rotation.set(0, 0, 0);
+        materials.forEach((material) => {
+          material.opacity = 1;
+          material.transparent = false;
+          material.depthWrite = true;
+          if (material instanceof THREE.MeshStandardMaterial) {
+            material.emissive.copy(material.userData.revealEmissive as THREE.Color);
+            material.emissiveIntensity = material.userData.revealEmissiveIntensity as number;
+          }
+          material.needsUpdate = true;
+        });
+      }
+      return;
+    }
     if (resumeDelay.current > 0) resumeDelay.current = Math.max(0, resumeDelay.current - delta);
     if (
       !interaction.current.dragging &&
@@ -162,6 +244,7 @@ interface HeroSceneProps {
   preloadSources?: string[];
   reducedMotion: boolean;
   paused?: boolean;
+  entranceDelay?: number;
   onOpenDetails?: () => void;
   onUserInteraction?: () => void;
 }
@@ -171,6 +254,7 @@ export function HeroScene({
   preloadSources = [],
   reducedMotion,
   paused = false,
+  entranceDelay = 0,
   onOpenDetails,
   onUserInteraction,
 }: HeroSceneProps) {
@@ -330,6 +414,7 @@ export function HeroScene({
           src={modelSrc}
           interaction={interaction}
           reducedMotion={reducedMotion || isPaused}
+          entranceDelay={entranceDelay}
         />
       </Suspense>
     </Canvas>

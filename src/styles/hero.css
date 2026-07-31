@@ -16,8 +16,7 @@
 }
 
 .hero--entering [data-hero-word],
-.hero--entering [data-hero-fade],
-.hero--entering [data-hero-model] {
+.hero--entering [data-hero-fade] {
   visibility: hidden;
 }
 
