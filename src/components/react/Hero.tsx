@@ -121,11 +121,168 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
 
   useEffect(() => {
     if (!rootRef.current) return;
+    const root = rootRef.current;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const context = gsap.context(() => {
-      gsap.timeline({ delay: 0.12, defaults: { ease: EASE.out } })
-        .from("[data-hero-word]", { yPercent: 125, duration: 1.05, stagger: 0.08 })
-        .from("[data-hero-model]", { opacity: 0, scale: 1.05, duration: 1.1 }, "-=0.7")
-        .from("[data-hero-fade]", { opacity: 0, y: 20, duration: 0.75, stagger: 0.08 }, "-=0.6");
+      const words = gsap.utils.toArray<HTMLElement>("[data-hero-word]");
+      const content = gsap.utils.toArray<HTMLElement>("[data-hero-fade]");
+      const model = root.querySelector<HTMLElement>("[data-hero-model]");
+      const intro = root.querySelector<HTMLElement>("[data-hero-intro]");
+      const particles = gsap.utils.toArray<HTMLElement>("[data-hero-particle]");
+
+      if (prefersReducedMotion) {
+        gsap.set([words, content, model], { clearProps: "all", autoAlpha: 1 });
+        gsap.set(intro, { autoAlpha: 0 });
+        root.classList.remove("hero--entering");
+        return;
+      }
+
+      gsap.set(words, { autoAlpha: 0, yPercent: 115, filter: "blur(9px)" });
+      gsap.set(content, { autoAlpha: 0, y: 34, filter: "blur(7px)" });
+      gsap.set(model, {
+        autoAlpha: 0,
+        xPercent: -4,
+        yPercent: 10,
+        scale: 0.72,
+        filter: "blur(16px)",
+        clipPath: "inset(68% 8% 0% 8% round 42%)",
+      });
+      gsap.set(particles, { autoAlpha: 0, scale: 0 });
+
+      const timeline = gsap.timeline({
+        delay: 0.12,
+        onComplete: () => {
+          root.classList.remove("hero--entering");
+          gsap.set([words, content, model], { clearProps: "visibility" });
+        },
+      });
+
+      // Act I — an organic visual pulse opens the stage and reveals the name.
+      timeline
+        .fromTo(
+          intro,
+          { autoAlpha: 0, scale: 1.08 },
+          { autoAlpha: 1, scale: 1, duration: 0.42, ease: "sine.out" },
+          0,
+        )
+        .fromTo(
+          "[data-hero-intro-ring]",
+          { scale: 0.18, opacity: 0, rotate: -14 },
+          {
+            scale: 1,
+            opacity: 0.72,
+            rotate: 0,
+            duration: 1.08,
+            stagger: 0.13,
+            ease: "sine.out",
+          },
+          0.08,
+        )
+        .to(
+          "[data-hero-intro-line]",
+          { scaleX: 1, duration: 0.78, ease: "power3.inOut" },
+          0.18,
+        )
+        .to(
+          words,
+          {
+            autoAlpha: 1,
+            yPercent: 0,
+            filter: "blur(0px)",
+            duration: 0.98,
+            stagger: 0.11,
+            ease: "power3.out",
+          },
+          0.42,
+        )
+        .to(intro, { autoAlpha: 0, scale: 1.035, duration: 0.68, ease: "sine.inOut" }, 1.12);
+
+      // Act II — information enters quickly and settles slowly.
+      timeline.to(
+        content,
+        {
+          autoAlpha: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 0.88,
+          stagger: 0.1,
+          ease: "power3.out",
+          force3D: true,
+        },
+        1.34,
+      );
+
+      // Act III — sand rises first, then the model resolves through a soft
+      // ocean-like sine wave instead of a linear scale/fade.
+      timeline
+        .fromTo(
+          particles,
+          {
+            autoAlpha: 0,
+            x: 0,
+            y: 48,
+            scale: 0.15,
+          },
+          {
+            autoAlpha: (particleIndex) => 0.35 + (particleIndex % 4) * 0.13,
+            x: (particleIndex) => ((particleIndex % 9) - 4) * 21,
+            y: (particleIndex) => -70 - (particleIndex % 6) * 24,
+            scale: (particleIndex) => 0.65 + (particleIndex % 3) * 0.32,
+            rotate: (particleIndex) => (particleIndex % 2 ? 1 : -1) * (45 + particleIndex * 7),
+            duration: 1.36,
+            stagger: { each: 0.026, from: "center" },
+            ease: "sine.out",
+          },
+          2.02,
+        )
+        .to(
+          model,
+          {
+            keyframes: [
+              {
+                autoAlpha: 0.62,
+                xPercent: 3.2,
+                yPercent: 5.5,
+                scale: 0.84,
+                filter: "blur(8px)",
+                clipPath: "inset(38% 4% 0% 4% round 30%)",
+                duration: 0.38,
+              },
+              {
+                autoAlpha: 0.88,
+                xPercent: -2,
+                yPercent: 2,
+                scale: 1.035,
+                filter: "blur(3px)",
+                clipPath: "inset(12% 1% 0% 1% round 16%)",
+                duration: 0.44,
+              },
+              {
+                autoAlpha: 1,
+                xPercent: 0.8,
+                yPercent: -0.6,
+                scale: 0.99,
+                filter: "blur(0px)",
+                clipPath: "inset(0% 0% 0% 0% round 0%)",
+                duration: 0.38,
+              },
+              {
+                xPercent: 0,
+                yPercent: 0,
+                scale: 1,
+                duration: 0.32,
+              },
+            ],
+            ease: "sine.inOut",
+            force3D: true,
+          },
+          2.16,
+        )
+        .to(
+          particles,
+          { autoAlpha: 0, y: "-=40", scale: 0.1, duration: 0.55, ease: "sine.in" },
+          3.02,
+        );
     }, rootRef);
     return () => context.revert();
   }, []);
@@ -222,10 +379,15 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
 
   return (
     <section
-      className="hero"
+      className="hero hero--entering"
       id="top"
       ref={rootRef}
     >
+      <div className="hero__intro-fx" data-hero-intro aria-hidden="true">
+        <span className="hero__intro-ring hero__intro-ring--outer" data-hero-intro-ring />
+        <span className="hero__intro-ring hero__intro-ring--inner" data-hero-intro-ring />
+        <i className="hero__intro-line" data-hero-intro-line />
+      </div>
       <div className="hero__type" aria-hidden="true">
         <span className="hero__word" data-hero-word>LARPER</span>
         <span className="hero__word" data-hero-word>CLOTHES</span>
@@ -234,8 +396,8 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
         Welcome to my store! Larper's campus closet sells second-hand clothes.
       </h1>
 
-      <div className="hero__model" data-hero-model>
-        <div className="hero__model-stage" ref={modelStageRef}>
+      <div className="hero__model">
+        <div className="hero__model-stage" ref={modelStageRef} data-hero-model>
           <Suspense
             fallback={
               <img
@@ -256,11 +418,16 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
             />
           </Suspense>
         </div>
+        <div className="hero__sand" aria-hidden="true">
+          {Array.from({ length: 26 }, (_, particleIndex) => (
+            <i key={particleIndex} data-hero-particle />
+          ))}
+        </div>
         <div className="hero__mobile-stage-meta" aria-hidden="true">
           <span>LOOK {slide.index}</span>
           <span>{slide.tag}</span>
         </div>
-        <div className="hero__mobile-carousel" role="tablist" aria-label="Featured clothes">
+        <div className="hero__mobile-carousel" role="tablist" aria-label="Featured clothes" data-hero-fade>
           <button className="hero__nav-btn" type="button" onClick={() => goTo(index - 1)} aria-label="Previous item">
             <Icon name="arrowLeft" size={16} />
           </button>
@@ -285,6 +452,7 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
           key={slide.id}
           type="button"
           className="hero__mobile-summary"
+          data-hero-fade
           onClick={() => setDetailsOpen(true)}
           aria-label={`View details for ${slide.name}`}
         >
