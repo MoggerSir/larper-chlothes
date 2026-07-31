@@ -34,6 +34,11 @@
   will-change: transform;
 }
 
+.lookbook__image video {
+  filter: blur(3px) brightness(0.86) saturate(0.9);
+  transform: scale(1.018);
+}
+
 .lookbook__overlay {
   z-index: 1;
   background:

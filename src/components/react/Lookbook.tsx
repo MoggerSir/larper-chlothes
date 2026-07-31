@@ -58,7 +58,7 @@ export function Lookbook({ imageSrc, videoMp4Src, videoWebmSrc, lines }: Lookboo
           media,
           { scale: 1.07 },
           {
-            scale: 1,
+            scale: 1.018,
             ease: "none",
             scrollTrigger: {
               trigger: section,
