@@ -148,7 +148,7 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
         },
       });
 
-      // Act I — an organic visual pulse opens the stage and reveals the name.
+      // Act I — let the visual pulse complete before any typography appears.
       timeline
         .fromTo(
           intro,
@@ -167,41 +167,42 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
             stagger: 0.13,
             ease: "sine.out",
           },
-          0.08,
+          0.06,
         )
         .to(
           "[data-hero-intro-line]",
           { scaleX: 1, duration: 0.78, ease: "power3.inOut" },
-          0.18,
+          0.2,
         )
+        .to(intro, { autoAlpha: 0, scale: 1.035, duration: 0.62, ease: "sine.inOut" }, 1.18)
+        // Act II — the name gets its own uninterrupted beat.
         .to(
           words,
           {
             autoAlpha: 1,
             yPercent: 0,
             rotateX: 0,
-            duration: 0.98,
-            stagger: 0.11,
+            duration: 0.82,
+            stagger: 0.08,
             ease: "power3.out",
             force3D: true,
           },
-          0.42,
-        )
-        .to(intro, { autoAlpha: 0, scale: 1.035, duration: 0.68, ease: "sine.inOut" }, 1.12);
+          1.68,
+        );
 
-      // Act II — information enters quickly and settles slowly.
+      // Act III — information and product card enter only after the title.
       timeline.to(
         content,
         {
           autoAlpha: 1,
           y: 0,
-          duration: 0.88,
-          stagger: 0.1,
+          duration: 0.78,
+          stagger: 0.08,
           ease: "power3.out",
           force3D: true,
         },
-        1.34,
-      );
+        2.72,
+      ).to({}, { duration: 0.01 }, 5.75);
     }, rootRef);
     return () => context.revert();
   }, []);
@@ -332,7 +333,7 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
               preloadSources={modelSources}
               reducedMotion={reducedMotion}
               paused={detailsOpen}
-              entranceDelay={2.05}
+              entranceDelay={4.05}
               onOpenDetails={() => setDetailsOpen(true)}
               onUserInteraction={() => setInteractionNonce((value) => value + 1)}
             />

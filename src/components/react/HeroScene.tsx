@@ -37,15 +37,22 @@ interface GarmentProps {
   interaction: React.MutableRefObject<InteractionState>;
   reducedMotion: boolean;
   entranceDelay: number;
+  cinematicEntrance: boolean;
 }
 
-function Garment({ src, interaction, reducedMotion, entranceDelay }: GarmentProps) {
+function Garment({
+  src,
+  interaction,
+  reducedMotion,
+  entranceDelay,
+  cinematicEntrance,
+}: GarmentProps) {
   const { scene } = useGLTF(src);
   const group = useRef<THREE.Group>(null);
   const revealElapsed = useRef(0);
-  const revealComplete = useRef(reducedMotion);
+  const revealComplete = useRef(reducedMotion || !cinematicEntrance);
   const viewport = useThree((state) => state.viewport);
-  const { model, center, dimensions, materials } = useMemo(() => {
+  const { model, hologram, center, dimensions, materials, hologramMaterials } = useMemo(() => {
     const clone = scene.clone(true);
     const clonedMaterials: THREE.Material[] = [];
     clone.traverse((object) => {
@@ -72,11 +79,37 @@ function Garment({ src, interaction, reducedMotion, entranceDelay }: GarmentProp
     });
     const bounds = new THREE.Box3().setFromObject(clone);
     const size = bounds.getSize(new THREE.Vector3());
+    const hologramClone = clone.clone(true);
+    const glowMaterials: THREE.MeshBasicMaterial[] = [];
+    hologramClone.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return;
+      const sourceMaterials = Array.isArray(object.material)
+        ? object.material
+        : [object.material];
+      const replacements = sourceMaterials.map(() => {
+        const glow = new THREE.MeshBasicMaterial({
+          color: "#ff3b24",
+          wireframe: true,
+          transparent: true,
+          opacity: 0,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+          toneMapped: false,
+        });
+        glowMaterials.push(glow);
+        return glow;
+      });
+      object.material = Array.isArray(object.material) ? replacements : replacements[0];
+      object.castShadow = false;
+      object.receiveShadow = false;
+    });
     return {
       model: clone,
+      hologram: hologramClone,
       center: bounds.getCenter(new THREE.Vector3()),
       dimensions: size,
       materials: clonedMaterials,
+      hologramMaterials: glowMaterials,
     };
   }, [scene]);
   const autoAngle = useRef(0);
@@ -86,7 +119,7 @@ function Garment({ src, interaction, reducedMotion, entranceDelay }: GarmentProp
     autoAngle.current = 0;
     floatPhase.current = 0;
     revealElapsed.current = 0;
-    revealComplete.current = reducedMotion;
+    revealComplete.current = reducedMotion || !cinematicEntrance;
     resumeDelay.current = 0.7;
     interaction.current.dragging = false;
     interaction.current.returning = true;
@@ -96,11 +129,21 @@ function Garment({ src, interaction, reducedMotion, entranceDelay }: GarmentProp
     interaction.current.currentPitch = 0;
     if (group.current) group.current.rotation.set(0, 0, 0);
     materials.forEach((material) => {
-      material.transparent = !reducedMotion;
-      material.opacity = reducedMotion ? 1 : 0;
-      material.depthWrite = reducedMotion;
+      material.transparent = cinematicEntrance && !reducedMotion;
+      material.opacity = cinematicEntrance && !reducedMotion ? 0 : 1;
+      material.depthWrite = reducedMotion || !cinematicEntrance;
     });
-  }, [src, interaction, materials, reducedMotion]);
+    hologramMaterials.forEach((material) => {
+      material.opacity = 0;
+    });
+  }, [
+    src,
+    interaction,
+    materials,
+    hologramMaterials,
+    reducedMotion,
+    cinematicEntrance,
+  ]);
   // Fit against both axes. Some assets contain a full model in a wide pose,
   // so height-only fitting can leave arms or legs outside the canvas.
   const compactViewport = viewport.width < 5;
@@ -132,28 +175,33 @@ function Garment({ src, interaction, reducedMotion, entranceDelay }: GarmentProp
       const progress = THREE.MathUtils.clamp(localTime / 1.62, 0, 1);
       const smooth = progress * progress * (3 - 2 * progress);
       const wave = Math.sin(progress * Math.PI);
-      const settle = Math.sin(progress * Math.PI * 3.25) * (1 - progress);
+      const settle = Math.sin(progress * Math.PI * 2.5) * (1 - progress);
 
-      // This is the actual Three.js garment group: it materializes as a thin,
-      // luminous vertical silhouette, unfolds, spins into place and settles.
-      group.current.scale.set(
-        scale * (0.16 + smooth * 0.84 + wave * 0.055),
-        scale * (1.48 - smooth * 0.48 + settle * 0.065),
-        scale * (0.16 + smooth * 0.84 + wave * 0.055),
-      );
+      // The model keeps its anatomy intact. A holographic copy scans in first,
+      // then the real garment cross-fades underneath it and settles front-on.
+      group.current.scale.setScalar(scale * (0.94 + smooth * 0.06 + wave * 0.025));
       group.current.position.y =
-        baseYOffset - (1 - smooth) * viewport.height * 0.22 + wave * 0.11;
-      group.current.rotation.y = (1 - smooth) * -Math.PI * 1.15 + settle * 0.16;
-      group.current.rotation.z = settle * -0.045;
+        baseYOffset - (1 - smooth) * viewport.height * 0.055 + wave * 0.045;
+      group.current.rotation.y = (1 - smooth) * -0.42 + settle * 0.055;
+      group.current.rotation.z = settle * -0.018;
       materials.forEach((material) => {
-        material.opacity = THREE.MathUtils.smoothstep(progress, 0.03, 0.56);
+        material.opacity = THREE.MathUtils.smoothstep(progress, 0.3, 0.74);
         if (material instanceof THREE.MeshStandardMaterial) {
           const original = material.userData.revealEmissive as THREE.Color;
-          const glowStrength = Math.sin(THREE.MathUtils.clamp(progress / 0.78, 0, 1) * Math.PI);
-          material.emissive.copy(original).lerp(new THREE.Color("#ff684c"), glowStrength * 0.72);
+          const glowStrength = Math.sin(
+            THREE.MathUtils.clamp((progress - 0.2) / 0.72, 0, 1) * Math.PI,
+          );
+          material.emissive.copy(original).lerp(new THREE.Color("#ff5538"), glowStrength * 0.62);
           material.emissiveIntensity =
-            (material.userData.revealEmissiveIntensity as number) + glowStrength * 2.1;
+            (material.userData.revealEmissiveIntensity as number) + glowStrength * 1.65;
         }
+      });
+      hologramMaterials.forEach((material, materialIndex) => {
+        const flicker = 0.88 + Math.sin(localTime * 34 + materialIndex * 0.7) * 0.12;
+        material.opacity =
+          Math.sin(THREE.MathUtils.clamp(progress / 0.72, 0, 1) * Math.PI) *
+          0.62 *
+          flicker;
       });
 
       if (progress >= 1) {
@@ -170,6 +218,9 @@ function Garment({ src, interaction, reducedMotion, entranceDelay }: GarmentProp
             material.emissiveIntensity = material.userData.revealEmissiveIntensity as number;
           }
           material.needsUpdate = true;
+        });
+        hologramMaterials.forEach((material) => {
+          material.opacity = 0;
         });
       }
       return;
@@ -224,6 +275,7 @@ function Garment({ src, interaction, reducedMotion, entranceDelay }: GarmentProp
   return (
     <group ref={group} scale={scale} dispose={null}>
       <primitive object={model} position={[-center.x, -center.y, -center.z]} />
+      <primitive object={hologram} position={[-center.x, -center.y, -center.z]} />
     </group>
   );
 }
@@ -259,6 +311,7 @@ export function HeroScene({
   onUserInteraction,
 }: HeroSceneProps) {
   const [modalPaused, setModalPaused] = useState(false);
+  const [cinematicEntrance, setCinematicEntrance] = useState(true);
   const isPaused = paused || modalPaused;
   const interaction = useRef<InteractionState>({
     dragging: false,
@@ -314,6 +367,10 @@ export function HeroScene({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    const timer = window.setTimeout(() => setCinematicEntrance(false), entranceDelay * 1000 + 2200);
+    return () => window.clearTimeout(timer);
+  }, [entranceDelay]);
   useEffect(() => {
     const handleModal = (event: Event) => {
       setModalPaused((event as CustomEvent<{ open: boolean }>).detail.open);
@@ -415,6 +472,7 @@ export function HeroScene({
           interaction={interaction}
           reducedMotion={reducedMotion || isPaused}
           entranceDelay={entranceDelay}
+          cinematicEntrance={cinematicEntrance}
         />
       </Suspense>
     </Canvas>

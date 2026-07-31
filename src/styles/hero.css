@@ -20,6 +20,10 @@
   visibility: hidden;
 }
 
+.hero--entering .hero__model-placeholder {
+  opacity: 0;
+}
+
 .hero__intro-fx {
   position: absolute;
   z-index: 8;
