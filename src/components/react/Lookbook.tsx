@@ -6,10 +6,12 @@ gsap.registerPlugin(ScrollTrigger);
 
 interface LookbookProps {
   imageSrc: string;
+  videoMp4Src: string;
+  videoWebmSrc: string;
   lines: string[];
 }
 
-export function Lookbook({ imageSrc, lines }: LookbookProps) {
+export function Lookbook({ imageSrc, videoMp4Src, videoWebmSrc, lines }: LookbookProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -17,9 +19,15 @@ export function Lookbook({ imageSrc, lines }: LookbookProps) {
     if (!section) return;
     const lineEls = section.querySelectorAll<HTMLElement>("[data-line]");
     const visual = section.querySelector<HTMLElement>("[data-lookbook-visual]");
-    const image = section.querySelector<HTMLImageElement>("[data-lookbook-image]");
+    const media = section.querySelector<HTMLElement>("[data-lookbook-media]");
+    const video = section.querySelector<HTMLVideoElement>("video");
     const progress = section.querySelector<HTMLElement>("[data-lookbook-progress]");
     if (!visual) return;
+    if (video && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      void video.play().catch(() => {
+        // The poster remains visible if the browser blocks autoplay.
+      });
+    }
 
     const headerBar = document.querySelector<HTMLElement>(".site-header__bar");
     const setHeaderDark = (active: boolean) => {
@@ -45,9 +53,9 @@ export function Lookbook({ imageSrc, lines }: LookbookProps) {
         onLeaveBack: () => setHeaderDark(false),
       });
 
-      if (image) {
+      if (media) {
         gsap.fromTo(
-          image,
+          media,
           { scale: 1.07 },
           {
             scale: 1,
@@ -111,6 +119,7 @@ export function Lookbook({ imageSrc, lines }: LookbookProps) {
 
     return () => {
       setHeaderDark(false);
+      video?.pause();
       context.revert();
     };
   }, [lines]);
@@ -119,13 +128,19 @@ export function Lookbook({ imageSrc, lines }: LookbookProps) {
     <section className="lookbook" ref={sectionRef} id="nosotros">
       <div className="lookbook__visual" data-lookbook-visual>
         <div className="lookbook__image">
-          <img
-            src={imageSrc}
-            alt="Editorial Larper Clothes"
-            loading="lazy"
-            decoding="async"
+          <video
+            muted
+            loop
+            playsInline
+            preload="none"
+            poster={imageSrc}
+            aria-hidden="true"
             data-lookbook-image
-          />
+            data-lookbook-media
+          >
+            <source src={videoMp4Src} type="video/mp4" />
+            <source src={videoWebmSrc} type="video/webm" />
+          </video>
         </div>
         <div className="lookbook__overlay" />
         <div className="lookbook__effects" aria-hidden="true">
