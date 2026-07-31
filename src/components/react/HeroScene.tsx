@@ -196,7 +196,7 @@ function Garment({
       }
 
       group.current.visible = true;
-      const progress = THREE.MathUtils.clamp(localTime / 1.62, 0, 1);
+      const progress = THREE.MathUtils.clamp(localTime / 1.82, 0, 1);
       const smooth = progress * progress * (3 - 2 * progress);
       const breathe = Math.sin(progress * Math.PI);
 
@@ -221,14 +221,24 @@ function Garment({
         const originX = sprite.userData.originX as number;
         const originY = sprite.userData.originY as number;
         const direction = sprite.userData.direction as number;
-        const drift = smooth * (dimensions.x * (0.15 + (spriteIndex % 4) * 0.035));
-        sprite.position.x = originX + direction * drift;
-        sprite.position.y = originY + smooth * dimensions.y * (0.035 + (spriteIndex % 3) * 0.018);
-        sprite.rotation.z += delta * direction * 0.08;
+        const verticalDirection = sprite.userData.verticalDirection as number;
+        const particleDelay = (spriteIndex % 6) * 0.018;
+        const mistProgress = THREE.MathUtils.clamp(
+          (progress - particleDelay) / (1 - particleDelay),
+          0,
+          1,
+        );
+        const mistEase = 1 - Math.pow(1 - mistProgress, 3);
+        const driftX = dimensions.x * (0.18 + (spriteIndex % 4) * 0.035);
+        const driftY = dimensions.y * (0.055 + (spriteIndex % 3) * 0.018);
+        sprite.position.x = originX + direction * driftX * mistEase;
+        sprite.position.y = originY + verticalDirection * driftY * mistEase;
+        sprite.scale.multiplyScalar(1 + delta * 0.12);
         const spriteMaterial = (sprite as THREE.Sprite).material as THREE.SpriteMaterial;
+        spriteMaterial.rotation += delta * direction * 0.055;
         spriteMaterial.opacity =
-          Math.sin(THREE.MathUtils.clamp(progress / 0.88, 0, 1) * Math.PI) *
-          (0.38 + (spriteIndex % 3) * 0.06);
+          Math.sin(THREE.MathUtils.clamp(mistProgress / 0.92, 0, 1) * Math.PI) *
+          (0.48 + (spriteIndex % 3) * 0.07);
       });
 
       if (progress >= 1) {
@@ -304,26 +314,30 @@ function Garment({
       <primitive object={model} position={[-center.x, -center.y, -center.z]} />
       <primitive object={shadow} position={[-center.x, -center.y, -center.z]} />
       <group name="reveal-mist" position={[0, 0, 0.22]}>
-        {Array.from({ length: 12 }, (_, index) => {
-          const column = (index % 4) / 3;
-          const row = Math.floor(index / 4) / 2;
-          const originX = (column - 0.5) * dimensions.x * 0.82;
-          const originY = (row - 0.5) * dimensions.y * 0.88;
-          const direction = index % 2 === 0 ? -1 : 1;
+        {Array.from({ length: 20 }, (_, index) => {
+          // Place the clouds around an ellipse that follows the silhouette,
+          // rather than filling the rectangular area behind the character.
+          const angle = (index / 20) * Math.PI * 2;
+          const originX = Math.cos(angle) * dimensions.x * 0.43;
+          const originY = Math.sin(angle) * dimensions.y * 0.47;
+          const direction = Math.cos(angle) < 0 ? -1 : 1;
+          const verticalDirection = Math.sin(angle) < 0 ? -1 : 1;
+          const cloudWidth = dimensions.x * (0.4 + (index % 4) * 0.07);
+          const cloudHeight = dimensions.y * (0.17 + (index % 3) * 0.035);
           return (
             <sprite
               key={index}
               position={[originX, originY, (index % 3) * 0.025]}
               scale={[
-                dimensions.x * (0.62 + (index % 3) * 0.12),
-                dimensions.y * (0.26 + (index % 2) * 0.08),
+                cloudWidth,
+                cloudHeight,
                 1,
               ]}
-              userData={{ originX, originY, direction }}
+              userData={{ originX, originY, direction, verticalDirection }}
             >
               <spriteMaterial
                 map={mistTexture}
-                color={index % 3 === 0 ? "#241713" : "#080706"}
+                color={index % 4 === 0 ? "#30211d" : "#080706"}
                 transparent
                 opacity={0}
                 depthWrite={false}

@@ -188,6 +188,28 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
             force3D: true,
           },
           1.68,
+        )
+        .to(
+          words,
+          {
+            yPercent: -2.4,
+            scale: 1.008,
+            duration: 0.12,
+            stagger: 0.035,
+            ease: "power2.out",
+          },
+          2.58,
+        )
+        .to(
+          words,
+          {
+            yPercent: 0,
+            scale: 1,
+            duration: 0.3,
+            stagger: 0.035,
+            ease: "back.out(2.2)",
+          },
+          2.7,
         );
 
       // Act III — information and product card enter only after the title.
@@ -201,8 +223,31 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
           ease: "power3.out",
           force3D: true,
         },
-        2.72,
-      ).to({}, { duration: 0.01 }, 5.75);
+        3.15,
+      )
+        .to(
+          content,
+          {
+            y: -5,
+            scale: 1.008,
+            duration: 0.12,
+            stagger: 0.035,
+            ease: "power2.out",
+          },
+          4.18,
+        )
+        .to(
+          content,
+          {
+            y: 0,
+            scale: 1,
+            duration: 0.32,
+            stagger: 0.035,
+            ease: "back.out(2)",
+          },
+          4.3,
+        )
+        .to({}, { duration: 0.01 }, 6.7);
     }, rootRef);
     return () => context.revert();
   }, []);
@@ -333,7 +378,7 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
               preloadSources={modelSources}
               reducedMotion={reducedMotion}
               paused={detailsOpen}
-              entranceDelay={4.05}
+              entranceDelay={4.82}
               onOpenDetails={() => setDetailsOpen(true)}
               onUserInteraction={() => setInteractionNonce((value) => value + 1)}
             />
