@@ -36,104 +36,26 @@ interface GarmentProps {
   src: string;
   interaction: React.MutableRefObject<InteractionState>;
   reducedMotion: boolean;
-  entranceDelay: number;
-  cinematicEntrance: boolean;
 }
 
-function Garment({
-  src,
-  interaction,
-  reducedMotion,
-  entranceDelay,
-  cinematicEntrance,
-}: GarmentProps) {
+function Garment({ src, interaction, reducedMotion }: GarmentProps) {
   const { scene } = useGLTF(src);
   const group = useRef<THREE.Group>(null);
-  const revealElapsed = useRef(0);
-  const revealComplete = useRef(reducedMotion || !cinematicEntrance);
   const viewport = useThree((state) => state.viewport);
-  const { model, shadow, center, dimensions, materials, shadowMaterials, mistTexture } = useMemo(() => {
+  const { model, center, dimensions } = useMemo(() => {
     const clone = scene.clone(true);
-    const clonedMaterials: THREE.Material[] = [];
     clone.traverse((object) => {
       if (object instanceof THREE.Mesh) {
-        const sourceMaterials = Array.isArray(object.material)
-          ? object.material
-          : [object.material];
-        const meshMaterials = sourceMaterials.map((material) => {
-          const copy = material.clone();
-          copy.transparent = true;
-          copy.opacity = 0;
-          copy.depthWrite = false;
-          clonedMaterials.push(copy);
-          return copy;
-        });
-        object.material = Array.isArray(object.material) ? meshMaterials : meshMaterials[0];
         object.castShadow = true;
         object.receiveShadow = true;
       }
     });
     const bounds = new THREE.Box3().setFromObject(clone);
     const size = bounds.getSize(new THREE.Vector3());
-    const shadowClone = clone.clone(true);
-    const darkMaterials: THREE.MeshBasicMaterial[] = [];
-    shadowClone.traverse((object) => {
-      if (!(object instanceof THREE.Mesh)) return;
-      const sourceMaterials = Array.isArray(object.material)
-        ? object.material
-        : [object.material];
-      const replacements = sourceMaterials.map(() => {
-        const dark = new THREE.MeshBasicMaterial({
-          color: "#090706",
-          transparent: true,
-          opacity: 0,
-          depthWrite: false,
-          toneMapped: false,
-        });
-        darkMaterials.push(dark);
-        return dark;
-      });
-      object.material = Array.isArray(object.material) ? replacements : replacements[0];
-      object.castShadow = false;
-      object.receiveShadow = false;
-    });
-
-    // Soft procedural alpha map shared by the 3D mist sprites. Keeping this
-    // texture tiny avoids introducing another network request into the hero.
-    const textureSize = 64;
-    const pixels = new Uint8Array(textureSize * textureSize * 4);
-    for (let y = 0; y < textureSize; y += 1) {
-      for (let x = 0; x < textureSize; x += 1) {
-        const offset = (y * textureSize + x) * 4;
-        const nx = (x / (textureSize - 1)) * 2 - 1;
-        const ny = (y / (textureSize - 1)) * 2 - 1;
-        const distance = Math.sqrt(nx * nx + ny * ny);
-        const softEdge = THREE.MathUtils.smoothstep(1 - distance, 0, 0.84);
-        const cloud =
-          0.78 +
-          Math.sin(x * 0.42 + y * 0.17) * 0.1 +
-          Math.sin(x * 0.13 - y * 0.31) * 0.12;
-        pixels[offset] = 255;
-        pixels[offset + 1] = 255;
-        pixels[offset + 2] = 255;
-        pixels[offset + 3] = Math.round(255 * softEdge * cloud);
-      }
-    }
-    const fogTexture = new THREE.DataTexture(
-      pixels,
-      textureSize,
-      textureSize,
-      THREE.RGBAFormat,
-    );
-    fogTexture.needsUpdate = true;
     return {
       model: clone,
-      shadow: shadowClone,
       center: bounds.getCenter(new THREE.Vector3()),
       dimensions: size,
-      materials: clonedMaterials,
-      shadowMaterials: darkMaterials,
-      mistTexture: fogTexture,
     };
   }, [scene]);
   const autoAngle = useRef(0);
@@ -142,8 +64,6 @@ function Garment({
   useEffect(() => {
     autoAngle.current = 0;
     floatPhase.current = 0;
-    revealElapsed.current = 0;
-    revealComplete.current = reducedMotion || !cinematicEntrance;
     resumeDelay.current = 0.7;
     interaction.current.dragging = false;
     interaction.current.returning = true;
@@ -152,22 +72,7 @@ function Garment({
     interaction.current.currentYaw = 0;
     interaction.current.currentPitch = 0;
     if (group.current) group.current.rotation.set(0, 0, 0);
-    materials.forEach((material) => {
-      material.transparent = cinematicEntrance && !reducedMotion;
-      material.opacity = cinematicEntrance && !reducedMotion ? 0 : 1;
-      material.depthWrite = reducedMotion || !cinematicEntrance;
-    });
-    shadowMaterials.forEach((material) => {
-      material.opacity = 0;
-    });
-  }, [
-    src,
-    interaction,
-    materials,
-    shadowMaterials,
-    reducedMotion,
-    cinematicEntrance,
-  ]);
+  }, [src, interaction]);
   // Fit against both axes. Some assets contain a full model in a wide pose,
   // so height-only fitting can leave arms or legs outside the canvas.
   const compactViewport = viewport.width < 5;
@@ -187,81 +92,6 @@ function Garment({
     : 0;
   useFrame((_, delta) => {
     if (!group.current) return;
-    if (!revealComplete.current) {
-      revealElapsed.current += Math.min(delta, 0.05);
-      const localTime = revealElapsed.current - entranceDelay;
-      if (localTime <= 0) {
-        group.current.visible = false;
-        return;
-      }
-
-      group.current.visible = true;
-      const progress = THREE.MathUtils.clamp(localTime / 1.82, 0, 1);
-      const smooth = progress * progress * (3 - 2 * progress);
-      const breathe = Math.sin(progress * Math.PI);
-
-      // A dense silhouette arrives first. The real garment quietly emerges
-      // from it while the surrounding shadow mist expands and dissipates.
-      group.current.scale.setScalar(scale * (0.975 + smooth * 0.025));
-      group.current.position.y =
-        baseYOffset - (1 - smooth) * viewport.height * 0.035 + breathe * 0.025;
-      group.current.rotation.y = 0;
-      group.current.rotation.z = 0;
-      materials.forEach((material) => {
-        material.opacity = THREE.MathUtils.smoothstep(progress, 0.22, 0.76);
-      });
-      shadowMaterials.forEach((material) => {
-        material.opacity =
-          (1 - THREE.MathUtils.smoothstep(progress, 0.28, 0.92)) *
-          THREE.MathUtils.smoothstep(progress, 0, 0.16) *
-          0.9;
-      });
-      const mistGroup = group.current.getObjectByName("reveal-mist");
-      mistGroup?.children.forEach((sprite, spriteIndex) => {
-        const originX = sprite.userData.originX as number;
-        const originY = sprite.userData.originY as number;
-        const direction = sprite.userData.direction as number;
-        const verticalDirection = sprite.userData.verticalDirection as number;
-        const particleDelay = (spriteIndex % 6) * 0.018;
-        const mistProgress = THREE.MathUtils.clamp(
-          (progress - particleDelay) / (1 - particleDelay),
-          0,
-          1,
-        );
-        const mistEase = 1 - Math.pow(1 - mistProgress, 3);
-        const driftX = dimensions.x * (0.18 + (spriteIndex % 4) * 0.035);
-        const driftY = dimensions.y * (0.055 + (spriteIndex % 3) * 0.018);
-        sprite.position.x = originX + direction * driftX * mistEase;
-        sprite.position.y = originY + verticalDirection * driftY * mistEase;
-        sprite.scale.multiplyScalar(1 + delta * 0.12);
-        const spriteMaterial = (sprite as THREE.Sprite).material as THREE.SpriteMaterial;
-        spriteMaterial.rotation += delta * direction * 0.055;
-        spriteMaterial.opacity =
-          Math.sin(THREE.MathUtils.clamp(mistProgress / 0.92, 0, 1) * Math.PI) *
-          (0.48 + (spriteIndex % 3) * 0.07);
-      });
-
-      if (progress >= 1) {
-        revealComplete.current = true;
-        group.current.scale.setScalar(scale);
-        group.current.position.y = baseYOffset;
-        group.current.rotation.set(0, 0, 0);
-        materials.forEach((material) => {
-          material.opacity = 1;
-          material.transparent = false;
-          material.depthWrite = true;
-          material.needsUpdate = true;
-        });
-        shadowMaterials.forEach((material) => {
-          material.opacity = 0;
-        });
-        const mistGroup = group.current.getObjectByName("reveal-mist");
-        mistGroup?.children.forEach((sprite) => {
-          ((sprite as THREE.Sprite).material as THREE.SpriteMaterial).opacity = 0;
-        });
-      }
-      return;
-    }
     if (resumeDelay.current > 0) resumeDelay.current = Math.max(0, resumeDelay.current - delta);
     if (
       !interaction.current.dragging &&
@@ -312,41 +142,6 @@ function Garment({
   return (
     <group ref={group} scale={scale} dispose={null}>
       <primitive object={model} position={[-center.x, -center.y, -center.z]} />
-      <primitive object={shadow} position={[-center.x, -center.y, -center.z]} />
-      <group name="reveal-mist" position={[0, 0, 0.22]}>
-        {Array.from({ length: 20 }, (_, index) => {
-          // Place the clouds around an ellipse that follows the silhouette,
-          // rather than filling the rectangular area behind the character.
-          const angle = (index / 20) * Math.PI * 2;
-          const originX = Math.cos(angle) * dimensions.x * 0.43;
-          const originY = Math.sin(angle) * dimensions.y * 0.47;
-          const direction = Math.cos(angle) < 0 ? -1 : 1;
-          const verticalDirection = Math.sin(angle) < 0 ? -1 : 1;
-          const cloudWidth = dimensions.x * (0.4 + (index % 4) * 0.07);
-          const cloudHeight = dimensions.y * (0.17 + (index % 3) * 0.035);
-          return (
-            <sprite
-              key={index}
-              position={[originX, originY, (index % 3) * 0.025]}
-              scale={[
-                cloudWidth,
-                cloudHeight,
-                1,
-              ]}
-              userData={{ originX, originY, direction, verticalDirection }}
-            >
-              <spriteMaterial
-                map={mistTexture}
-                color={index % 4 === 0 ? "#30211d" : "#080706"}
-                transparent
-                opacity={0}
-                depthWrite={false}
-                toneMapped={false}
-              />
-            </sprite>
-          );
-        })}
-      </group>
     </group>
   );
 }
@@ -367,7 +162,6 @@ interface HeroSceneProps {
   preloadSources?: string[];
   reducedMotion: boolean;
   paused?: boolean;
-  entranceDelay?: number;
   onOpenDetails?: () => void;
   onUserInteraction?: () => void;
 }
@@ -377,12 +171,10 @@ export function HeroScene({
   preloadSources = [],
   reducedMotion,
   paused = false,
-  entranceDelay = 0,
   onOpenDetails,
   onUserInteraction,
 }: HeroSceneProps) {
   const [modalPaused, setModalPaused] = useState(false);
-  const [cinematicEntrance, setCinematicEntrance] = useState(true);
   const isPaused = paused || modalPaused;
   const interaction = useRef<InteractionState>({
     dragging: false,
@@ -438,10 +230,6 @@ export function HeroScene({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  useEffect(() => {
-    const timer = window.setTimeout(() => setCinematicEntrance(false), entranceDelay * 1000 + 2200);
-    return () => window.clearTimeout(timer);
-  }, [entranceDelay]);
   useEffect(() => {
     const handleModal = (event: Event) => {
       setModalPaused((event as CustomEvent<{ open: boolean }>).detail.open);
@@ -542,8 +330,6 @@ export function HeroScene({
           src={modelSrc}
           interaction={interaction}
           reducedMotion={reducedMotion || isPaused}
-          entranceDelay={entranceDelay}
-          cinematicEntrance={cinematicEntrance}
         />
       </Suspense>
     </Canvas>

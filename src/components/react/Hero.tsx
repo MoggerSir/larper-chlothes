@@ -126,10 +126,11 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
     const context = gsap.context(() => {
       const words = gsap.utils.toArray<HTMLElement>("[data-hero-word]");
       const content = gsap.utils.toArray<HTMLElement>("[data-hero-fade]");
+      const model = modelStageRef.current;
       const intro = root.querySelector<HTMLElement>("[data-hero-intro]");
 
       if (prefersReducedMotion) {
-        gsap.set([words, content], { clearProps: "all", autoAlpha: 1 });
+        gsap.set([words, content, model], { clearProps: "all", autoAlpha: 1 });
         gsap.set(intro, { autoAlpha: 0 });
         root.classList.remove("hero--entering");
         return;
@@ -139,12 +140,19 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
       // these enormous glyphs forced a costly full repaint on every frame.
       gsap.set(words, { autoAlpha: 0, yPercent: 112, rotateX: -8 });
       gsap.set(content, { autoAlpha: 0, y: 30 });
+      gsap.set(model, {
+        autoAlpha: 0,
+        xPercent: 13,
+        scale: 1.08,
+        rotate: 2,
+        filter: "blur(5px)",
+      });
 
       const timeline = gsap.timeline({
         delay: 0.12,
         onComplete: () => {
           root.classList.remove("hero--entering");
-          gsap.set([words, content], { clearProps: "visibility" });
+          gsap.set([words, content, model], { clearProps: "visibility" });
         },
       });
 
@@ -188,28 +196,6 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
             force3D: true,
           },
           1.68,
-        )
-        .to(
-          words,
-          {
-            yPercent: -2.4,
-            scale: 1.008,
-            duration: 0.12,
-            stagger: 0.035,
-            ease: "power2.out",
-          },
-          2.58,
-        )
-        .to(
-          words,
-          {
-            yPercent: 0,
-            scale: 1,
-            duration: 0.3,
-            stagger: 0.035,
-            ease: "back.out(2.2)",
-          },
-          2.7,
         );
 
       // Act III — information and product card enter only after the title.
@@ -223,31 +209,21 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
           ease: "power3.out",
           force3D: true,
         },
-        3.15,
-      )
-        .to(
-          content,
-          {
-            y: -5,
-            scale: 1.008,
-            duration: 0.12,
-            stagger: 0.035,
-            ease: "power2.out",
-          },
-          4.18,
-        )
-        .to(
-          content,
-          {
-            y: 0,
-            scale: 1,
-            duration: 0.32,
-            stagger: 0.035,
-            ease: "back.out(2)",
-          },
-          4.3,
-        )
-        .to({}, { duration: 0.01 }, 6.7);
+        2.82,
+      ).to(
+        model,
+        {
+          autoAlpha: 1,
+          xPercent: 0,
+          scale: 1,
+          rotate: 0,
+          filter: "blur(0px)",
+          duration: 0.82,
+          ease: EASE.out,
+          force3D: true,
+        },
+        4.02,
+      );
     }, rootRef);
     return () => context.revert();
   }, []);
@@ -378,7 +354,6 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
               preloadSources={modelSources}
               reducedMotion={reducedMotion}
               paused={detailsOpen}
-              entranceDelay={4.82}
               onOpenDetails={() => setDetailsOpen(true)}
               onUserInteraction={() => setInteractionNonce((value) => value + 1)}
             />
