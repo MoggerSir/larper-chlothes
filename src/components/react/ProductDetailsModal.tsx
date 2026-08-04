@@ -25,7 +25,7 @@ interface ProductDetailsModalProps {
 }
 
 export function ProductDetailsModal({ product, onClose }: ProductDetailsModalProps) {
-  const [activeImage, setActiveImage] = useState<"flat" | "model">("flat");
+  const [activeImage, setActiveImage] = useState<"flat" | "model">("model");
   const [size, setSize] = useState("");
   const [color, setColor] = useState("");
   const [closing, setClosing] = useState(false);
@@ -89,7 +89,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
     openFrameRef.current = window.requestAnimationFrame(() => {
       secondOpenFrameRef.current = window.requestAnimationFrame(() => setVisible(true));
     });
-    setActiveImage("flat");
+    setActiveImage("model");
     viewerOpenRef.current = false;
     setViewerOpen(false);
     setZoom(1);
@@ -144,6 +144,10 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
         </button>
 
         <div className="product-modal__gallery">
+          <header className="product-modal__campaign-head" aria-hidden="true">
+            <p>SECOND LIFE / ONE OF ONE</p>
+            <strong>WORN<br /><i>AGAIN.</i></strong>
+          </header>
           <div
             className="product-modal__main-image"
             role="button"
@@ -165,6 +169,16 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             <span className="product-modal__image-label">
               {activeImage === "flat" ? "Product view" : "Worn view"} · enlarge
             </span>
+          </div>
+          <div className="product-modal__callouts" aria-hidden="true">
+            <div className="product-modal__callout product-modal__callout--top">
+              <i />
+              <p><strong>{product.category}</strong><span>Selected construction.<br />Ready for another story.</span></p>
+            </div>
+            <div className="product-modal__callout product-modal__callout--bottom">
+              <i />
+              <p><strong>{product.colorway}</strong><span>Original character.<br />No two pieces alike.</span></p>
+            </div>
           </div>
           <div className="product-modal__thumbs" aria-label="Product views">
             <button
@@ -192,10 +206,19 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             <span>ITEM {product.index}</span>
           </div>
           <div className="product-modal__priority">
-            <p className="product-modal__price">{product.priceLabel} <small>MXN</small></p>
             <h2 id="product-modal-title">{product.name}</h2>
             <p className="product-modal__label">{product.label} · {product.category}</p>
+            <p className="product-modal__price">{product.priceLabel} <small>MXN</small></p>
           </div>
+
+          <aside className="product-modal__why">
+            <p>WHY THIS PIECE</p>
+            <ul>
+              <li><Icon name="shieldCheck" size={17} /><span><strong>Inspected</strong>Quality checked by our team</span></li>
+              <li><Icon name="ring" size={17} /><span><strong>One of one</strong>Only this piece is available</span></li>
+              <li><Icon name="truck" size={17} /><span><strong>Campus ready</strong>Local and nationwide delivery</span></li>
+            </ul>
+          </aside>
 
           <fieldset className="product-modal__options product-modal__options--size">
             <legend>
@@ -245,10 +268,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             <span>{product.priceLabel}</span>
           </button>
 
-          <div className="product-modal__assurances">
-            <p><Icon name="truck" size={16} /> Shipping across Mexico</p>
-            <p><Icon name="shieldCheck" size={16} /> Protected purchase</p>
-          </div>
+          <p className="product-modal__closing-line">ONE PIECE. ANOTHER CHAPTER.</p>
         </div>
       </section>
       {viewerOpen && (
