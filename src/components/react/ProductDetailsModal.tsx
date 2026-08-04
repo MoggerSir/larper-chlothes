@@ -31,6 +31,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
   const [closing, setClosing] = useState(false);
   const [visible, setVisible] = useState(false);
   const [viewerOpen, setViewerOpen] = useState(false);
+  const [detailsExpanded, setDetailsExpanded] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const closingRef = useRef(false);
@@ -69,6 +70,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
     pointersRef.current.clear();
     pinchDistanceRef.current = 0;
     setViewerOpen(false);
+    setDetailsExpanded(false);
     setZoom(1);
     setPan({ x: 0, y: 0 });
   };
@@ -128,7 +130,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
       if (event.target === event.currentTarget) requestClose();
     }}>
       <section
-        className={`product-modal__dialog product-modal__dialog--${product.id}`}
+        className={`product-modal__dialog product-modal__dialog--${product.id} ${detailsExpanded ? "is-details-expanded" : "is-details-collapsed"}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="product-modal-title"
@@ -180,6 +182,30 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
               <p><strong>{product.colorway}</strong><span>Original character.<br />No two pieces alike.</span></p>
             </div>
           </div>
+          <div className="product-modal__mobile-essentials">
+            <div className="product-modal__mobile-name">
+              <small>{product.category}</small>
+              <strong>{product.name}</strong>
+              <span>{product.description.split(".")[0]}.</span>
+            </div>
+            <p className="product-modal__mobile-price">{product.priceLabel}<small> MXN</small></p>
+            <fieldset className="product-modal__mobile-sizes">
+              <legend>Size</legend>
+              <div>
+                {product.sizes.map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    className={size === item ? "is-selected" : ""}
+                    onClick={() => setSize(item)}
+                    aria-pressed={size === item}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          </div>
           <div className="product-modal__thumbs" aria-label="Product views">
             <button
               type="button"
@@ -200,7 +226,16 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
           </div>
         </div>
 
-        <div className="product-modal__content">
+        <div className={`product-modal__content ${detailsExpanded ? "is-expanded" : "is-collapsed"}`}>
+          <button
+            type="button"
+            className="product-modal__panel-toggle"
+            onClick={() => setDetailsExpanded((current) => !current)}
+            aria-expanded={detailsExpanded}
+          >
+            <span>{detailsExpanded ? "Hide details" : "View full details"}</span>
+            <Icon name="arrowDown" size={16} />
+          </button>
           <div className="product-modal__eyebrow">
             <span>{product.tag}</span>
             <span>ITEM {product.index}</span>
