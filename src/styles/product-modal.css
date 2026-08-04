@@ -1342,7 +1342,7 @@
   .product-modal__main-image--flat {
     --editorial-mobile-top: 8.5rem;
     --editorial-mobile-right: 2%;
-    --editorial-mobile-bottom: 5.5rem;
+    --editorial-mobile-bottom: 10rem;
     --editorial-mobile-left: 2%;
     z-index: 3;
   }
@@ -1355,21 +1355,21 @@
   .product-modal__dialog--everlast-fight-tee .product-modal__main-image--model {
     --editorial-mobile-top: 7.5rem;
     --editorial-mobile-right: 0%;
-    --editorial-mobile-bottom: 5.2rem;
+    --editorial-mobile-bottom: 9.5rem;
     --editorial-mobile-left: 7%;
   }
 
   .product-modal__dialog--arch-terminal-tee .product-modal__main-image--model {
     --editorial-mobile-top: 9.2rem;
     --editorial-mobile-right: -5%;
-    --editorial-mobile-bottom: 6.2rem;
+    --editorial-mobile-bottom: 10.5rem;
     --editorial-mobile-left: 11%;
   }
 
   .product-modal__dialog--riot-cargo-denim .product-modal__main-image--model {
     --editorial-mobile-top: 10rem;
     --editorial-mobile-right: 8%;
-    --editorial-mobile-bottom: 7rem;
+    --editorial-mobile-bottom: 11.5rem;
     --editorial-mobile-left: 12%;
   }
 
@@ -1378,7 +1378,7 @@
     height: 100%;
     padding: 0;
     object-fit: contain;
-    object-position: center bottom;
+    object-position: center center;
   }
 
   .product-modal__main-image::after {
@@ -1699,7 +1699,7 @@
   .product-modal__main-image,
   .product-modal__main-image--flat {
     --editorial-mobile-top: 6.5rem;
-    --editorial-mobile-bottom: 5rem;
+    --editorial-mobile-bottom: 8.5rem;
   }
   .product-modal__content.is-expanded { max-height: 76svh; }
   .product-modal__mobile-name { width: min(55vw, 13rem); }
