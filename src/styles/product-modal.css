@@ -1586,14 +1586,25 @@
   .product-modal__panel-toggle {
     position: sticky;
     z-index: 3;
-    top: 0;
-    width: 100%;
+    top: -0.45rem;
+    width: calc(100% + 0.5rem);
     min-height: 2.45rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 0.2rem;
+    margin: 0 -0.25rem 0.75rem;
+    padding: 0 0.8rem;
     color: #f5ece2;
+    border: 1px solid rgba(255, 248, 239, 0.18);
+    border-radius: 0.9rem;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.035)),
+      rgba(24, 22, 20, 0.82);
+    box-shadow:
+      0 9px 24px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    backdrop-filter: blur(22px) saturate(140%);
     font-family: var(--font-mono);
     font-size: 0.6rem;
     letter-spacing: 0.11em;
@@ -1606,6 +1617,10 @@
 
   .product-modal__content.is-expanded .product-modal__panel-toggle svg {
     transform: rotate(180deg);
+  }
+
+  .product-modal__content.is-collapsed .product-modal__panel-toggle {
+    margin-bottom: 0;
   }
 
   .product-modal__content::before {
