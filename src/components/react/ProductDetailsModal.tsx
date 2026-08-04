@@ -211,14 +211,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             <p className="product-modal__price">{product.priceLabel} <small>MXN</small></p>
           </div>
 
-          <aside className="product-modal__why">
-            <p>WHY THIS PIECE</p>
-            <ul>
-              <li><Icon name="shieldCheck" size={17} /><span><strong>Inspected</strong>Quality checked by our team</span></li>
-              <li><Icon name="ring" size={17} /><span><strong>One of one</strong>Only this piece is available</span></li>
-              <li><Icon name="truck" size={17} /><span><strong>Campus ready</strong>Local and nationwide delivery</span></li>
-            </ul>
-          </aside>
+          <p className="product-modal__description">{product.description}</p>
 
           <fieldset className="product-modal__options product-modal__options--size">
             <legend>
@@ -239,6 +232,15 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             </div>
           </fieldset>
 
+          <aside className="product-modal__why">
+            <p>WHY THIS PIECE</p>
+            <ul>
+              <li><Icon name="shieldCheck" size={17} /><span><strong>Inspected</strong>Quality checked by our team</span></li>
+              <li><Icon name="ring" size={17} /><span><strong>One of one</strong>Only this piece is available</span></li>
+              <li><Icon name="truck" size={17} /><span><strong>Campus ready</strong>Local and nationwide delivery</span></li>
+            </ul>
+          </aside>
+
           <fieldset className="product-modal__options">
             <legend>Available color</legend>
             <div className="product-modal__choice-row">
@@ -255,8 +257,6 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
               ))}
             </div>
           </fieldset>
-
-          <p className="product-modal__description">{product.description}</p>
 
           <div className="product-modal__stock">
             <span />
