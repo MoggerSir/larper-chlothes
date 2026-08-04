@@ -128,7 +128,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
       if (event.target === event.currentTarget) requestClose();
     }}>
       <section
-        className="product-modal__dialog"
+        className={`product-modal__dialog product-modal__dialog--${product.id}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="product-modal-title"
@@ -149,7 +149,7 @@ export function ProductDetailsModal({ product, onClose }: ProductDetailsModalPro
             <strong>WORN<br /><i>AGAIN.</i></strong>
           </header>
           <div
-            className="product-modal__main-image"
+            className={`product-modal__main-image product-modal__main-image--${activeImage}`}
             role="button"
             tabIndex={0}
             aria-label={`Open a detailed view of ${product.name}`}

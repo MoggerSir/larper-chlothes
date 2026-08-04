@@ -867,10 +867,79 @@
 .product-modal__main-image {
   position: absolute;
   z-index: 2;
-  inset: 7% 18% 1.5% 20%;
+  inset:
+    var(--editorial-image-top, 7%)
+    var(--editorial-image-right, 18%)
+    var(--editorial-image-bottom, 1.5%)
+    var(--editorial-image-left, 20%);
   overflow: visible;
   border-radius: 0;
   background: transparent;
+}
+
+/* Each cutout has a different silhouette. These profiles preserve the full
+   PNG while keeping faces, hands and oversized poses away from editorial copy. */
+.product-modal__main-image--flat {
+  --editorial-image-top: 16%;
+  --editorial-image-right: 24%;
+  --editorial-image-bottom: 12%;
+  --editorial-image-left: 25%;
+}
+
+.product-modal__dialog--trenchie-gothic-zip .product-modal__main-image--model {
+  --editorial-image-top: 9%;
+  --editorial-image-right: 17%;
+  --editorial-image-bottom: 3%;
+  --editorial-image-left: 24%;
+}
+
+.product-modal__dialog--atrocity-layered-tee .product-modal__main-image--model {
+  --editorial-image-top: 8%;
+  --editorial-image-right: 16%;
+  --editorial-image-bottom: 2%;
+  --editorial-image-left: 24%;
+}
+
+.product-modal__dialog--vice-quarter-zip .product-modal__main-image--model {
+  --editorial-image-top: 9%;
+  --editorial-image-right: 17%;
+  --editorial-image-bottom: 2%;
+  --editorial-image-left: 23%;
+}
+
+.product-modal__dialog--arch-terminal-tee .product-modal__main-image--model {
+  --editorial-image-top: 12%;
+  --editorial-image-right: 14%;
+  --editorial-image-bottom: 5%;
+  --editorial-image-left: 30%;
+}
+
+.product-modal__dialog--nocturne-leather-jacket .product-modal__main-image--model {
+  --editorial-image-top: 9%;
+  --editorial-image-right: 16%;
+  --editorial-image-bottom: 3%;
+  --editorial-image-left: 25%;
+}
+
+.product-modal__dialog--riot-cargo-denim .product-modal__main-image--model {
+  --editorial-image-top: 15%;
+  --editorial-image-right: 22%;
+  --editorial-image-bottom: 10%;
+  --editorial-image-left: 25%;
+}
+
+.product-modal__dialog--shadow-utility-cargo .product-modal__main-image--model {
+  --editorial-image-top: 8%;
+  --editorial-image-right: 17%;
+  --editorial-image-bottom: 3%;
+  --editorial-image-left: 25%;
+}
+
+.product-modal__dialog--everlast-fight-tee .product-modal__main-image--model {
+  --editorial-image-top: 10%;
+  --editorial-image-right: 17%;
+  --editorial-image-bottom: 4%;
+  --editorial-image-left: 26%;
 }
 
 .product-modal__main-image::after {
@@ -1100,7 +1169,6 @@
 @media (max-width: 68rem) and (min-width: 54.01rem) {
   .product-modal__dialog { grid-template-columns: minmax(0, 1.35fr) minmax(20rem, 0.75fr); }
   .product-modal__callout { display: none; }
-  .product-modal__main-image { right: 8%; }
 }
 
 @media (max-width: 54rem) {
@@ -1132,8 +1200,45 @@
   .product-modal__campaign-head strong { font-size: clamp(3.15rem, 17vw, 5.7rem); }
 
   .product-modal__main-image {
-    inset: 10% 5% 2% 5%;
+    inset:
+      var(--editorial-mobile-top, 10%)
+      var(--editorial-mobile-right, 5%)
+      var(--editorial-mobile-bottom, 2%)
+      var(--editorial-mobile-left, 5%);
     border-radius: 0;
+  }
+
+  .product-modal__main-image--flat {
+    --editorial-mobile-top: 17%;
+    --editorial-mobile-right: 12%;
+    --editorial-mobile-bottom: 7%;
+    --editorial-mobile-left: 12%;
+  }
+
+  .product-modal__dialog--trenchie-gothic-zip .product-modal__main-image--model,
+  .product-modal__dialog--atrocity-layered-tee .product-modal__main-image--model,
+  .product-modal__dialog--vice-quarter-zip .product-modal__main-image--model,
+  .product-modal__dialog--nocturne-leather-jacket .product-modal__main-image--model,
+  .product-modal__dialog--shadow-utility-cargo .product-modal__main-image--model,
+  .product-modal__dialog--everlast-fight-tee .product-modal__main-image--model {
+    --editorial-mobile-top: 12%;
+    --editorial-mobile-right: 3%;
+    --editorial-mobile-bottom: 1%;
+    --editorial-mobile-left: 12%;
+  }
+
+  .product-modal__dialog--arch-terminal-tee .product-modal__main-image--model {
+    --editorial-mobile-top: 16%;
+    --editorial-mobile-right: 1%;
+    --editorial-mobile-bottom: 4%;
+    --editorial-mobile-left: 16%;
+  }
+
+  .product-modal__dialog--riot-cargo-denim .product-modal__main-image--model {
+    --editorial-mobile-top: 19%;
+    --editorial-mobile-right: 10%;
+    --editorial-mobile-bottom: 8%;
+    --editorial-mobile-left: 15%;
   }
 
   .product-modal__main-image img {
@@ -1175,7 +1280,6 @@
 @media (max-width: 34rem) {
   .product-modal__dialog { grid-template-rows: minmax(25rem, 59svh) minmax(0, 1fr); }
   .product-modal__campaign-head strong { font-size: clamp(3rem, 17vw, 4.7rem); }
-  .product-modal__main-image { inset: 12% 2% 1% 2%; }
   .product-modal__why { padding: 0.85rem; }
   .product-modal__why li strong { font-size: 0.65rem; }
 }
